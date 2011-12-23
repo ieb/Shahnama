@@ -1,0 +1,20 @@
+  <ul class="list-unprimed">
+    {% for ill in data.gallery.main %}
+  	<li>
+     <span class="list-data">
+       <span class="list-pre">{{ ill.index}}{# 016v #}</span>
+       {% if ill.title %} 
+       <a class="list-link" href="{{ ill.url }}" >{{ ill.title }}{# Illuminated title page (verso side) #}</a> 
+       {% else %}
+       <a class="list-link" href="{{ ill.url }}" >(unnamed)</a> 
+       {% endif %}
+       {% if ill.image %} 
+       <a class="list-image" href="{{ ill.image }}"></a>
+       {% else %}
+       <a class="list-image" href="{{ assets }}/none.png"></a>
+       {% endif %}
+     </span>
+	</li>
+	{% endfor %}
+  </ul>
+</div>

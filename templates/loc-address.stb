@@ -1,0 +1,15 @@
+<container>
+	<text left="ucfirst" right="punc">
+		<join separator=", ">
+			<if key="StreetAddress">
+				<value key="StreetAddress"/>
+			</if>
+			<if key="City">
+				<value key="City"/>
+			</if>
+			<if key="Country">
+				<value key="Country"/>
+			</if>
+		</join>
+	</text>	
+</container>

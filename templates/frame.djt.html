@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+	
+
+	<!-- page layout -->
+    <link rel="stylesheet" type="text/css" href="{{ assets }}/frame.css"/>    
+    <script type="text/javascript" src="{{ assets }}/jquery-1.6.1.min.js"></script>
+    <link type="text/css" href="{{ assets }}/jquery-ui/css/custom-theme/jquery-ui-1.8.7.custom.css" rel="Stylesheet" />	
+    <script type="text/javascript" src="{{ assets }}/jquery-ui/js/jquery-ui-1.8.7.custom.min.js"></script>
+
+	  <script type="text/javascript" src="{{ assets }}/header.js"></script>
+  
+
+        {% block head %}{% endblock %}
+
+
+    <!-- metadata elements -->
+    <title>Shahnama Project</title>
+  </head>
+  <body>
+    <img id="transparent" src="{{ assets }}/transparent.png" style="display: none;"/>
+    <div id="frame-all">
+
+	  <div id="frame-header">
+	    <a id="title-link" href="{{ server }}/front">home</a>
+		<h1 id="frame-title">
+		  <span>Shahnama Project</span> <!-- span is for special font -->
+		</h1>
+		<h2 id="frame-slogan">
+		  A comprehensive collection of manuscripts of<br/>
+		  The Shahnama, the Persian epic 'Book of Kings'.
+		</h2>
+		<div id="frame-search">
+		    <!--
+			<a href="#">search</a>
+			<input type="text" id="frame-search-box"/>
+			-->
+		</div>
+		<div id="frame-right">
+			about:
+			<ul>
+			  {% for page in top-pages %}
+			  <li><a href="{{ page.url }}" >{{ page.about }}</a></li>
+			  {% endfor %}  
+			</ul>
+		</div>
+	  </div>
+	  <div id="frame-nav">
+		<ul id="frame-nav-right">
+		  <!--
+		  <li><a href="#">Links</a></li>
+		  <li><a href="#">Events</a></li>
+		  <li><a href="#">Send Correction</a></li>
+		  -->
+		 </ul>
+		<ul id="frame-nav-left">
+          <li><a href="{{ server }}/country" >Find by location</a></li>
+          <li><a href="{{ server }}/chapter" >Find by scene</a></li>
+          <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/bibliography">Bibliography</a></li>
+		  <!--
+		  <li><a href="#">Manuscripts</a></li>
+		  <li><a href="#">Scenes</a></li>
+		  <li><a href="#">Bibliography</a></li>
+		  <li><a href="#" id="nav-wb">Personal</a></li>
+		  -->
+		</ul>
+
+ 	    <div id="wb-blob" class="ui-widget-content ui-corner-bottom limpet top-limpet">
+ 	      <a href="#" class="ui-icon ui-icon-circle-close rfloat-icon limpet-closer">&nbsp;</a>
+ 	      <a href="#">Workbooks</a>
+	    </div>
+       
+       
+       
+	  </div>
+
+	  <div id="frame-front">
+	  
+	    {% block beforeform %} {% endblock %}
+	    {% if not post %}
+	    <form method="POST" action="{{ post }}" >
+	    {% endif %}
+	    <div id="front-left">
+	      {% block superleft %}
+	  	  <div id="front-left-nav" >
+	  	    <h2>The Collection</h2>
+	  	    <ul>
+	  	      <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/index/collection/">Find by location</a></li>
+              <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/index/depiction/">Find by scene</a></li>
+              <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/bibliography">Bibliography</a></li>
+	  	      <!--
+	  	      <li><a href="#">Find a Library/Museum</a></li>
+	  	      <li><a href="#">Find a Scene</a></li>
+	  	      <li><a href="#">Search</a></li>
+	  	      <li><a href="#">Use your workbooks</a></li>
+	  	      -->
+	  	    </ul>
+	  	  </div>
+	  	  {% endblock %}
+	  	  {% block left %} {% endblock %}
+          {% include 'news-col.html' %}
+	  	</div>
+	    <div id="front-main">
+	  	  <div id="front-content">
+	  	  	  <div id="front-border">&#160;</div>
+                {% block main %} {% endblock %}
+	  	        {% include 'thanks.html' %}
+	  	        <div class="front-special-clear">&nbsp;</div>
+	      </div>
+	    </div>
+        {% if not post %}
+	    </form>
+	    {% endif %}
+	  </div>
+	  <div id="frame-footer">
+		<div id="frame-logo">&#160;</div>
+	  </div>
+	</div>
+  </body>
+</html>

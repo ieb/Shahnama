@@ -1,0 +1,32 @@
+<container>
+	<text left="ucfirst" right="punc">
+		<join separator=", ">
+			<if key="NumberColumns">
+				<value key="NumberColumns"/> columns
+			</if>	
+			<if key="NumberRows">
+				<value key="NumberRows"/> rows
+			</if>	
+			<if key="Script">
+				<value key="Script"/>
+			</if>
+			<if key="TitleSerial">			
+				text of <value key="TitleSerial" authority="ms-title"/>
+			</if>
+			<if key="Calligrapher">
+				<em>calligrapher</em> <value key="Calligrapher"/>
+			</if>
+			<condition key="Preface" expression="[Nn]one" match="false">
+				<if key="Preface">
+					<value key="Preface"/>
+					<condition key="Preface" expression="[Pp]reface" match="false">					
+						preface
+					</condition>
+				</if>
+			</condition>
+			<if key="Glossary">
+				with glossary
+			</if>
+		</join>
+	</text>	
+</container>

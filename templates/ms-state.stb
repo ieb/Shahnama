@@ -1,0 +1,49 @@
+<container>
+	<text left="ucfirst" right="punc">
+		<join separator=", ">
+			<value key="MsTypeSerial" authority="ms-type"/>
+			<text right="lc">
+				<value key="MsStatusSerial" authority="ms-status"/>
+			</text>
+			<if key="EstimatedNumberFolios">
+				estimated <value key="EstimatedNumberFolios"/> total folios
+			</if>
+			<if key="NumberExtantFolios">
+				<value key="NumberExtantFolios"/> extant folios
+			</if>
+			<if key="Illuminations">
+				<value key="Illuminations"/> illuminations
+			</if>
+			<if key="Frontispieces">
+				<value key="Frontispieces"/> frontispieces
+			</if>
+			<if key="FinisPieces">
+				<value key="FinisPieces"/> finispieces
+			</if>
+			<if key="Shahnama">
+				<value key="Shahnama"/> illustrations of Shahnama
+			</if>
+			<if key="Garshaspnama">
+				<value key="Garshaspnama"/> illustrations of Garshaspnama
+			</if>
+			<if key="Barzunama">
+				<value key="Barzunama"/> illustrations of Barzunama
+			</if>
+			<if key="OtherNumber">
+				<value key="OtherNumber"/> other illustrations
+				<if key="OtherDescription">
+					(<value key="OtherDescription"/>)
+				</if>
+			</if>
+			<container>
+				<value key="LanguageSerial" authority="ms-lang"/>
+				<if key="MsAuthorSerial">
+					(<value key="MsAuthorSerial" authority="ms-author"/>)
+				</if>
+			</container>
+			<if key="TotalNumber">
+				<value key="TotalNumber"/> illustrations in ms
+			</if>
+		</join>
+	</text>
+</container>

@@ -1,0 +1,15 @@
+<container>
+	<text left="ucfirst" right="punc">
+		<join separator=", ">
+			<if key="ColophonNumber">
+				Colophon on <value key="ColophonNumber"/>
+			</if>
+			<if key="NumberOtherColophons">
+				other Colophon(s) on <value key="NumberOtherColophons"/>
+			</if>
+			<if key="FolioNoSamplePage">
+				Sample page is <value key="FolioNoSamplePage"/>
+			</if>	
+		</join>
+	</text>	
+</container>

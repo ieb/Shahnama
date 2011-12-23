@@ -1,0 +1,19 @@
+<container>
+	<text left="ucfirst" right="punc">
+		<join separator=", ">
+			<if key="NameContact">
+				<value key="NameContact"/>
+			</if>
+			<if key="TelephoneNumber">
+				<em>tel</em> <value key="TelephoneNumber"/>
+			</if>
+			<if key="FaxNumber">
+				<em>fax</em> on <value key="FaxNumber"/>
+			</if>
+			<if key="Email">
+				<em>email</em> <value key="Email"/>
+			</if>
+		</join>
+	</text>	
+</container>
+

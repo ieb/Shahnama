@@ -1,0 +1,18 @@
+<container>
+	<text left="ucfirst" right="punc">
+		<join separator=", ">
+			<value key="FormatSerial" authority="ill-format"/>
+			<text tail="mm (h x w)">
+				<em>page size</em>
+				<join separator=" x " >
+					<if key="Length">
+						<value key="Length"/>
+					</if>
+					<if key="Width">
+						<value key="Width"/>
+					</if>
+				</join>			
+			</text>
+		</join>
+	</text>
+</container>

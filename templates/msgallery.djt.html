@@ -1,0 +1,34 @@
+    {% for ill in data.gallery.decorated %}
+	<li>
+	    {% if ill.image %}
+		<img src="{{ ill.image }}" width="60" height="80"/>
+		{% else %}
+		<img src="{{ assets }}/none.png" width="60" height="80"/>
+		{% endif %}
+		<div class="panel-content">
+		  <div class="panel-content-image">
+		    {% if ill.url %}
+		  	<a  href="{{ ill.url }}" class="panel-insert"></a>
+		  	{% endif %}
+		  	{% if ill.image %}
+			<a  class="panel-image" href="{{ ill.image }}" >loading</a>
+			{% else %}
+			<a  class="panel-image" href="{{ assets }}/none.png" >loading</a>
+			{% endif %}
+		  </div>
+		  <div class="panel-overlay">
+		    <h3>{{ ill.title }}{# Illuminated title page (verso side) #}</h3>
+              <p>
+                {% if ill.index %}
+                <b>{{ ill.index }}{# Ryl Pers 910 #}</b>
+                  {if % ill.text %}, {{ ill.text }} {% endif %}
+               {% elseif ill.text %}
+                  {{ ill.text }}
+               {% endif %}
+              </p>
+    		  </div>
+		</div>
+	</li>
+	{% endfor %}
+
+	

@@ -1,0 +1,183 @@
+{% extends "frame.html" %}
+
+{% block head %}  
+    <link rel="stylesheet" type="text/css" href="{{ assets }}/manuscript.css"/>
+    <script type="text/javascript"  src="{{ assets }}//jquery.easing.1.3.js"/>
+    <script type="text/javascript"  src="{{ assets }}//jquery.timers-1.2.js"/>
+    <script type="text/javascript"  src="{{ assets }}/jquery.galleryview-2.1.1.js"/>
+    <link  rel="stylesheet" type="text/css" href="{{ assets }}/galleryview.css"/>
+    <script type="text/javascript" src="{{ assets }}/buttons.js"/>
+    <script type="text/javascript" src="{{ assets }}/aq-tip.js"/>
+    <script type="text/javascript" src="{{ assets }}/slideshow.js"/>
+    <script type="text/javascript" src="{{ assets }}/list.js"/>
+    <script type="text/javascript" src="{{ assets }}/notes.js"/>
+{% endblock %}
+  
+{% block main %}
+  <div>
+    <div id="frame-main">
+      <div id="frame-article">
+        <div id="frame-main-top">
+	</div>
+        <div id="frame-main-left">
+          <div id="main-ill">
+            {% if data.painting_url %}
+            <img  src="{{ data/painting_url }}"/>
+            {% else %}
+            <img  src="{{ assets }}/none.png"/>
+            {% endif %}
+          </div>
+        </div>
+        <div id="frame-main-right">
+          <div id="manuscript-jumper">
+            ms page: 
+            {% if data.prev-url %}
+             <span title=".ui-icon-seek-next"  class="grey-box ui-corner-all inline-block">
+              <a class="icon-prev" href="{{ data.prev-url }}" />
+            </span>
+            {% endif %}
+            {% if data.next-url %}
+            <span title=".ui-icon-seek-next" class="grey-box ui-corner-all inline-block">
+              <a class="icon-next" href="{{ data.next-url }}" />
+            </span>
+            {% endif %}
+          </div>
+          <div id="manuscript-block">
+		    <span>{{ data.FolioNumber }}</span>, <b>{{ data.TitleEnglish }}</b> <b>{{ data.TitlePersian }}</b>.
+		  </div>
+          <div id="manuscript-details">
+            <div class="manuscript-details-list">
+              <dl id="super-manuscript-details-body-main">
+                <dt>Within</dt>
+                <dd>
+                	<a href="{{ data.ms_url }}" >{{ data.ms_name }}</a> in 
+                	<a href="{{ data.loc_url }}">{{ data.loc_name }}</a>,
+                	<span>{{ data.loc_city }}</span>,
+                	<a href="{{ data.cou_url }}" >{{ data.cou_name }}</a>
+                </dd>
+                <dt>Depicts</dt>
+                <dd>
+                	<a href="{{ data/sc_url }}">{{ data/sc_name }}</a>, in 
+                	<a href="{{ data/ch_url }}">{{ data/ch_name }}</a>
+                </dd>
+              </dl>
+              <dl id="manuscript-details-body-main">
+                {% if data.work %}
+                <dt>Work</dt>
+                <dd>{{ data/work }}</dd>
+                {% endif %}
+                {% if data.date %}
+                <dt>Date</dt>
+                <dd>{{ data.date }}{# Rajab 1131 (June 1719). (Gregorian date derived from Hijri) #}</dd>
+                {% endif %}
+                {% if data.form %}
+                <dt>Form</dt>
+                <dd>{{ data.form }}{# 160 x 170 #}</dd>
+                {% endif %}
+                {% if data.folio %}
+                <dt>Folio</dt>
+                <dd>{{ data.folio }}{# 42 #}</dd>
+                {% endif %}
+                {% if data.painter %}
+                <dt>Painter</dt>
+                <dd>{{ data.painter }}{# Indian, Punjab #}</dd>
+                {% endif %}
+              </dl>
+              <div id="manuscript-details-body-notes" >{{ data.notes }}{#
+                <p>
+					Rustam goes into the steppe to choose himself a horse. After observing and rejecting several others he captures a wild colt, Rakhsh.
+				</p>
+				#}
+              </div>
+              <h3 class="wide-notes">Location In Editions</h3>
+              <div id="big-manuscript-details-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>&#160;</th>
+                      <th>Mohl</th>
+                      <th>Bertels</th>
+                      <th>Khaleghi-Motlagh</th>
+                      <th>Dabir-Siyaqi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="even">
+                      <th>Chapter</th>
+                      <td>{{ data.chapter.ChapterName }}{# Dara son of Darab (14 years) #}</td>
+                      <td>{{ data.chapter-b }}{# Dara son of Darab (453) #}</td>
+                      <td>{{ data.chapter-k }}{# Dara son of Darab (459) #}</td>
+                      <td>{{ data.chapter-ds }}{# Dara son of Darab (1485) #}</td>
+                    </tr>
+                    <tr>
+                      <th>First Line</th>
+                      <td>{{ data.FirstLineM }}{# 318 #}</td>
+                      <td>{{ data.FirstLineB }}{# 313 #}</td>
+                      <td>{{ data.FirstLineK }}{# &#160; #}</td>
+                      <td>{{ data.FirstLineDS }}{# &#160; #}</td>
+                    </tr>
+                    <tr class="even">
+                      <th>Break Line Before</th>
+                      <td>{{ data.BreakLineMbefore }}{# 333 #}</td>
+                      <td>{{ data.BreakLineBbefore }}{# 328 #}</td>
+                      <td>{{ data.BreakLineKbefore }}{# &#160; #}</td>
+                      <td>{{ data.BreakLineDSbefore }}{# &#160; #}</td>
+                    </tr>
+                    <tr>
+                      <th>Break Line After</th>
+                      <td>{{ data.BreakLineMafter }}{# &#160; #}</td>
+                      <td>{{ data.BreakLineBafter }}{# &#160; #}</td>
+                      <td>{{ data.BreakLineKafter }}{# &#160; #}</td>
+                      <td>{{ data.BreakLineDSafter }}{# &#160; #}</td>
+                    </tr>
+                    <tr class="even">
+                      <th>Last Line</th>
+                      <td>{{ data.LastLineM }}{# 333 #}</td>
+                      <td>{{ data.LastLineB }}{# 328 #}</td>
+                      <td>{{ data.LastLineK }}{# &#160; #}</td>
+                      <td>{{ data.LastLineDS }}{# &#160; #}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div id="manuscript-details-references">
+                  {% if data.references %}
+		          <h3 class="notes">References</h3>
+		          <div class="manuscript-details-list">
+		            <dl id="manuscript-details-body-meta">
+		              {% for ref in data.references %}
+		                {% if ref.key %}
+		                <dt>{{ ref.key }}{# General #}</dt>
+		                <dd>{{ ref.value }}{# Norgren, J. &amp; Davis, E. Preliminary index of Shah-nameh illustrations. University of Michigan. Ann Arbor. USA #}</dd>
+		                {% endif %}
+		              {% endfor %}
+		            </dl>
+		          </div>
+		          {% endif %}
+                <div class="manuscript-details-list">
+                  <dl id="manuscript-details-body-meta">
+                    <dt>This Record</dt>
+                    <dd>
+						<span>{{ data.status }}{# Ready #}</span>.
+		              	Last update by 
+						<span>{{ data.DatabaseUser }}</span>
+		              	on
+						<span>{{ data.up_date }}</span>
+                    </dd>
+	                <dt>Copyright</dt>
+	                <dd>
+	              	  <span>{{ data.CopyrightDetails }}<span/>
+				    </dd>
+                  </dl>
+                </div>
+                <div id="print-block">
+                  <a href="#">print this page</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

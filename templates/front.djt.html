@@ -1,0 +1,57 @@
+{% extends "frame.html" %}
+  
+{% block head %}
+        <link rel="stylesheet" type="text/css" href="{{ assets }}/front.css"/>
+{% endblock %}
+  
+{% block main %}
+  <div>
+
+          <div id="front-float"><img  src="{{ assets }}/front-page/front-main.jpg" width="320" style="border: 4px solid black;"/></div>
+            <h1>Shahnama Digital Index</h1>
+            <p>
+                This site brings you a comprehensive collection of manuscripts of the Shahnama, the Persian epic 'Book of Kings', completed by the poet Firdausi in AD 1010, together with a display of the miniature paintings in each one. There are currently about 1500 manuscripts and single pages recorded, 18,000 records of paintings, and 12,000 images from all over the world, now accessible with a few clicks of a mouse.
+            </p>
+            <p>
+                It allows you to see and compare all the different depictions of a particular scene in the story, produced over a period of almost 600 years, and to look through the manuscripts held in different collections.
+            </p>
+            <div id="front-thanks">
+              <h2>With Thanks To</h2>
+              <hr/>
+              <img src="{{ assets }}/front-page/ihf.png" src="ihf.png" class="front-thanks-vert"/>
+              <div class="front-thanks-vert">
+                <img src="{{ assets }}/front-page/ahrc.gif"  width="120" class="front-thanks-horiz"/>
+                <img src="{{ assets }}/front-page/uc.jpg" width="120" class="front-thanks-horiz"/>
+                <img src="{{ assets }}/front-page/int.png"  width="120" class="front-thanks-horiz"/>
+              </div>
+            </div>
+            <div class="front-special-clear">&nbsp;</div>
+
+
+  </div>
+{% endblock %}
+  
+{% block left %}
+  <div>
+        <div id="front-left-events">
+            <h2>News &amp; Events</h2>
+            <ul>
+              {% for value in list %}
+                <li>
+                    <h3>
+                        <a href="{{ value.url }}">
+                            <img src="{{ value.thumbnail }}"  width="96" height="70"/>
+                        <span>{{ value.short-title }}</span>
+                        </a>
+                    </h3>
+                      <span>{{ value.short-text }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+            <div id="new-event">
+              <a href="#" href="{{ server.page-create }}">new news/event ...</a>
+            </div>
+        </div>      
+  </div>
+{% endblock %}
+

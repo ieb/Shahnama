@@ -1,0 +1,34 @@
+<container>
+	<text right="nodot">
+		<text right="chop" tail=". ">
+			<value key="UniformAuthor"/>
+			<value key="FullTitle"/>
+			<if key="InTitle1">
+				(<b>in</b> <value key="InTitle1"/>)
+			</if>
+			<if key="InTitle2">
+				(<b>in</b> <value key="InTitle2"/>)
+			</if>
+		</text>
+		<text right="chop" tail=". ">
+			<join separator=", ">
+				<value key="PublisherName"/>
+				<value key="PublishedCity"/>
+				<value key="PublishedCountry"/>
+				<value key="PublishedYear"/>
+			</join>
+		</text>
+		<if key="VolumeNumber|SerialYear">
+			(<b>vol</b>. <join separator=", "><value key="VolumeNumber"/> <value key="SerialYear"/></join>)
+		</if>
+		<if key="Pages">
+			<b>pp.</b> <value key="Pages"/>
+		</if>
+		<if key="ElectronicAddress">
+			<value key="ElectronicAddress"/>
+		</if>
+		<if key="bib-class">
+			[<value key="bib-class"/>]
+		</if>
+	</text>
+</container>

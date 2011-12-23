@@ -1,0 +1,13 @@
+<ul>
+  {% for row in rows %}
+	<li>
+		<h3>
+			<a href="event.html">
+				<img src="{{ row.thumbnail }}" width="96" height="70"/>
+				<span>{{ row.row.title }}</span>
+			</a>
+		</h3>
+		<p>{{ row.row.text }}</p>
+	</li>
+  {% endfor %}
+</ul>

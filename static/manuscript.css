@@ -1,0 +1,449 @@
+#manuscript-block {
+  font-size: 14px;
+}
+
+#manuscript-block a {
+  color: black;
+  border-bottom: 1px dotted;
+  text-decoration: none;
+}
+
+#manuscript-block a:hover {
+  color: black;
+  border-bottom: 1px solid;
+  text-decoration: none;
+}
+
+#manuscript-details a {
+  color: black;
+  border-bottom: 1px dotted;
+  text-decoration: none;
+}
+
+#manuscript-details a:hover {
+  color: black;
+  border-bottom: 1px solid;
+  text-decoration: none;
+}
+
+#print-block {
+  margin-right: -24px;
+}
+
+#print-block a {
+  color: black;
+  border-bottom: 1px dotted;
+  text-decoration: none;
+  font-size: 10px;
+  float: right;
+}
+
+#print-block a:hover {
+  color: black;
+  border-bottom: 1px solid;
+  text-decoration: none;
+}
+
+.manuscript-details-list {
+  font-size: 12px;
+  color: #333;
+  margin: 16px 0;
+}
+
+#manuscript-details-body-main {
+  color: black;
+}
+
+#super-manuscript-details-body-main {
+  color: black;
+  font-size: 14px;
+}
+
+.manuscript-details-list dl {
+  margin: 16px 0 0 0;
+  padding: 0;
+}
+
+.manuscript-details-list dl dt {
+  float: left;
+  width: 100px;
+  text-align: right;
+  clear: both;
+}
+
+.manuscript-details-list dl dt:after {
+  content: ":";
+} 
+
+.manuscript-details-list dl dd:after {
+  content: ".";
+} 
+
+.manuscript-details-list dl dd {
+  margin: 0 0 0 110px;
+  padding: 0 0 4px 0;
+}
+
+.manuscript-details-list-meta {
+  font-size: 11px;
+}
+
+.manuscript-details-list-notes {
+  font-size: 11px;
+}
+
+#manuscript-details-body-notes b {
+  color: black;
+}
+
+h3.notes {
+  color: black;
+  font-weight: normal;
+  width: 100px;
+  text-align: right;
+}
+
+h3.notes:after {
+  content: ":";
+}
+
+h3.wide-notes {
+  color: black;
+  font-weight: normal;
+  margin-left: 20px;
+  margin-top: 30px;
+}
+
+h3.wide-notes:after {
+  content: ":";
+}
+
+#views {
+  font-size: 9px;
+  margin: 0 auto 8px auto;
+  text-align: center;
+}
+
+.icon-list {
+  background: url("icons.png");
+  width: 16px;
+  height: 16px;
+  background-position:-240px -128px;
+  margin-top: -2px;
+  margin-left: -2px;
+  float: left;
+}
+
+.icon-grid {
+  background: url("icons.png");
+  width: 16px;
+  height: 16px;
+  background-position:-112px -112px;
+  margin-top: -2px;
+  margin-left: -2px;
+  float: left;
+}
+
+.icon-loc {
+  background: url("icons.png");
+  width: 16px;
+  height: 16px;
+  background-position: 0px -112px;
+  margin-top: -2px;
+  margin-left: -2px;
+  float: left;
+}
+
+.icon-date {
+  background: url("icons.png");
+  width: 16px;
+  height: 16px;
+  background-position:-32px -112px;
+  margin-top: -2px;
+  margin-left: -2px;
+  float: left;
+}
+
+.icon-slides {
+  background: url("icons.png");
+  width: 16px;
+  height: 16px;
+  background-position:-208px -128px;
+  margin-top: -2px;
+  margin-left: -2px;
+  float: left;
+}
+
+#list {
+  display: none;
+  width: 50%;
+  margin: 0 32px 0 32px;
+  height: 100%;
+  text-align: left;
+  right: 50%;
+  position: absolute;
+  top: 180px;
+}
+
+#list-inner {
+  width: 500px;
+  margin: auto;
+  text-align: center;
+}
+
+#list-inner ul {
+  text-align: left;
+}
+
+#list-inner ul li {
+	margin: 8px 0;
+}
+
+.panel-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -30px;
+  margin-top: -20px;
+  color: #666;
+  text-decoration: none;
+  font-size: 20px;
+}
+
+.panel-content-image {
+  height: 100%;
+}
+
+a.list-link {
+  color: black;
+  border-bottom: 1px dotted;
+  text-decoration: none;
+}
+
+a.list-link:hover {
+  color: black;
+  border-bottom: 1px solid;
+  text-decoration: none;
+}
+
+.list-image {
+  display: none;
+}
+
+#list ul {
+  list-style-image: url("arrow.gif");
+  list-style-type: circle;
+  padding-left: 70px;
+}
+
+#grid {
+  display: none;
+  width: 50%;
+  margin: 0 32px 0 32px;
+  height: 100%;
+  text-align: left;
+  right: 50%;
+  position: absolute;
+  top: 150px;
+}
+
+#grid-inner {
+  margin: auto;
+  text-align: center;
+}
+
+#grid-inner ul {
+  text-align: left;
+  float: left;
+  list-style: none;
+}
+
+#grid-inner ul img {
+  border: 0px;
+  text-align: center;
+  margin: 0 auto;
+  display: block;
+  max-height: 120px;
+}
+
+#grid-inner ul a {
+  margin: 4px;
+  height: 120px;
+  display: block;
+}
+
+#grid-inner ul li {
+  float: left;
+  border: 1px solid #eee;
+  width: 80px;
+  height: 190px;
+  overflow: hidden;
+  margin: 4px;
+  background: #eee;
+  font-size: 9px;
+}
+
+#grid-inner .grid-data {
+  display: block;
+}
+
+.icon-next {
+  background: url("icons.png");
+  width: 16px;
+  height: 16px;
+  background-position:-32px -160px;
+  margin-top: -1px;
+  margin-left: 0px;
+  float: left;
+}
+
+.icon-prev {
+  background: url("icons.png");
+  width: 16px;
+  height: 16px;
+  background-position:-48px -160px;
+  margin-top: -1px;
+  margin-left: 0px;
+  float: left;
+}
+
+.grey-box {
+    background: url("greyglass.png") repeat-x scroll 50% 50% #FFFFFF;
+    border: 1px solid #888;
+    color: #444444;
+    font-weight: bold;
+}
+
+.grey-box:hover {
+    background: url("orangeglass.png") repeat-x scroll 50% 50% #FFFFFF;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+#manuscript-jumper {
+  float: right;
+  margin-right: -48px;
+  margin-top: 2px;
+  vertical-align: top;
+}
+
+#manuscript-details-table {
+  width: 450px;
+  margin-bottom: 40px;
+}
+
+#manuscript-details-table .even td {
+  background: #eee;
+}
+
+#manuscript-details-table .even th {
+  background: #eee;
+}
+
+#manuscript-details-table td {
+  width: 70px;
+  padding: 2px;
+}
+
+#manuscript-details-table tbody th {
+  font-weight: normal;
+  width: 80px;
+  color: #000;
+  text-align: right;
+  padding: 2px 20px 2px 2px;
+}
+
+#manuscript-details-table thead th {
+  color: #000;
+  font-weight: normal;
+}
+
+#manuscript-details-table thead th.top-row {
+  border-bottom: 1px solid #eee;
+}
+
+#big-manuscript-details-table {
+  width: 500px;
+  margin-bottom: 40px;
+}
+
+#big-manuscript-details-table .even td {
+  background: #eee;
+}
+
+#big-manuscript-details-table .even th {
+  background: #eee;
+}
+
+#big-manuscript-details-table td {
+  width: 100px;
+  padding: 2px;
+}
+
+#big-manuscript-details-table tbody th {
+  font-weight: normal;
+  width: 80px;
+  color: #000;
+  text-align: right;
+  padding: 2px 20px 2px 2px;
+}
+
+#big-manuscript-details-table thead th {
+  color: #000;
+  font-weight: normal;
+}
+
+#big-manuscript-details-table thead th.top-row {
+  border-bottom: 1px solid #eee;
+}
+
+.panel-message {
+  color: white;
+}
+
+.panel-thumb {
+  color: #666;
+}
+
+.panel-thumb-outer {
+  border: 1px solid #333;
+  height: 100%;
+}
+
+#grid-inner ul .grid-link-none {
+  color: black;
+  text-decoration: none;
+  text-align: center;
+  vertical-align: middle;
+  height: 80px;
+  padding-top: 40px;
+}
+
+#orders {
+  font-size: 9px;
+  margin: 0 auto 0px -48px;
+  text-align: center;
+}
+
+#order-tag {
+  font-size: 10px;
+}
+
+#main-ill {
+  width: 50%;
+  margin: 0 auto;
+  height: 100%;
+  text-align: left;
+  right: 50%;
+  position: absolute;
+  top: 122px;
+  text-align: center;
+}
+
+#main-ill img {
+  max-width: 450px;
+  border: 8px solid #333;
+}
+

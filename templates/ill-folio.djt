@@ -1,0 +1,15 @@
+<container>
+	<text left="ucfirst" right="punc">
+{% join %}
+
+		<join separator=", " >
+			<if key="FolioNumber">
+				<value key="FolioNumber"/>
+			</if>
+			<if key="ReconstructedFolioNum">
+				<em>reconstructed as</em>
+				<value key="ReconstructedFolioNum"/>
+			</if>
+		</join>
+	</text>	
+</container>

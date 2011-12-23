@@ -1,0 +1,10 @@
+<container>
+	<text left="ucfirst" right="punc">
+		<join separator=", ">
+			<value key="PlaceOrigin"/>
+			<if key="Patron">
+				<em>patron</em> <value key="Patron"/>
+			</if>
+		</join>
+	</text>	
+</container>

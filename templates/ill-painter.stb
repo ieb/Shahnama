@@ -1,0 +1,13 @@
+<container>
+	<text left="ucfirst" right="punc">
+		<join separator=", " >
+			<if key="SchoolPainting">
+				<value key="SchoolPainting"/>
+				<em>school</em>
+			</if>
+			<if key="NamePainter">
+				<value key="NamePainter"/>
+			</if>
+		</join>
+	</text>	
+</container>

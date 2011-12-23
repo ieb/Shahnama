@@ -1,0 +1,178 @@
+{% extends "frame.html" %}
+{% block head %}  
+    <link rel="stylesheet" type="text/css" href="{{ assets }}/manuscript.css"/>    
+        
+    <!-- slideshow -->
+    <script type="text/javascript" src="{{ assets }}/jquery.easing.1.3.js"></script>
+    <script type="text/javascript" src="{{ assets }}/jquery.timers-1.2.js"></script>
+    <script type="text/javascript" src="{{ assets }}/jquery.galleryview-2.1.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ assets }}/galleryview.css"/>
+  
+    <script type="text/javascript" src="{{ assets }}/buttons.js"></script>    
+    <script type="text/javascript" src="{{ assets }}/aq-tip.js"></script>    
+    <script type="text/javascript" src="{{ assets }}/slideshow.js"></script>    
+    <script type="text/javascript" src="{{ assets }}/list.js"></script>    
+    <script type="text/javascript" src="{{ assets }}/notes.js"></script>    
+{% endblock %}
+{% block main %}  
+  <div>
+
+	<div id="frame-main">
+	<div id="frame-article">
+	<div id="frame-main-top">
+
+		<div id="views">
+			<input type="radio" id="grid-select" name="radio" />
+			<label for="grid-select">
+				<span class="icon-grid"></span>
+				Grid
+			</label>
+			<input type="radio" id="list-select" name="radio"  />
+			<label for="list-select">
+			    <span class="icon-list"></span>
+			    List
+			</label>
+			<input type="radio" id="slides-select" name="radio" checked="checked" />
+			<label for="slides-select">
+				<span class="icon-slides"></span>
+				Slides
+			</label>
+		</div>
+	</div>
+
+	  <div id="frame-main-left">
+	    <div id="grid">
+	      <div id="grid-inner">
+	        <ul>
+	        	{% include "msgrid.djt.html" %}
+	        </ul>
+	      </div>
+	    </div>
+	    <div id="list">
+	      <div id="list-inner">
+        	{% include "mslist.djt.html" %}
+          </div>
+	    </div>
+	    <div id="slideshow">
+	      <ul class="galleryview unloaded" id="photos">
+	           {% include "msgallery.djt.html" %}
+	      </ul>
+	    </div>
+	  </div>
+	  <div id="frame-main-right">
+	    <div id="manuscript-jumper">
+	      <span title=".ui-icon-seek-next" class="grey-box ui-corner-all inline-block">
+	        <span class="icon-prev"/>
+	      </span>
+	      <span title=".ui-icon-seek-next" class="grey-box ui-corner-all inline-block">
+	        <span class="icon-next"/>
+	      </span>
+	    </div>
+	    <div id="manuscript-block">
+	    	<b>{{ data.EnglishTitle }}{# Iskandar comforting the dying Dara #}</b> <b>{{ data.PersianTitle }}{# Iskandar comforting the dying Dara #}</b>.
+		</div>
+	    <div id="manuscript-details">
+	      <div class="manuscript-details-list">
+	        <dl id="manuscript-details-body-main">
+	          <dt>Within chapter</dt>
+	          <dd>
+	          	<a href="{{ data.chapter_url }}" >{{ data.chapter_name }}{# 26 May 1518 (6 Jumada I 924) #}
+	          	</a>
+	          </dd>
+	        </dl>
+              <div id="manuscript-details-body-notes" >{{ data.notes }}{#
+                <p>
+					Rustam goes into the steppe to choose himself a horse. After observing and rejecting several others he captures a wild colt, Rakhsh.
+				</p>
+				#}
+              </div>
+              <h3 class="wide-notes">Location In Editions &amp; Translations</h3>
+	          <div id="big-manuscript-details-table">
+	            <table>
+	              <thead>
+					<tr>
+						<th>&#160;</th>
+						<th colspan="3">Editions</th>
+						<th colspan="2">Translations</th>
+					</tr>
+	                <tr>
+	                  <th>&#160;</th>
+	                  <th>Mohl</th>
+	                  <th>Bertels</th>
+	                  <th>Khaleghi-Motlagh</th>
+	                  <th>Mohl</th>
+	                  <th>Warner</th>
+	                </tr>
+	              </thead>
+	              <tbody>
+	                <tr class="even">
+	                  <th>Volume</th>
+	                  <td>{{ data.MohlVolume }}{# Dara son of Darab (14 years) #}</td>
+	                  <td>{{ data.BertelsVolume }}{# Dara son of Darab (453) #}</td>
+	                  <td>{{ data.KVolume }}{# Dara son of Darab (459) #}</td>
+	                  <td>{{ data.MTVolume }}{# Dara son of Darab (1485) #}</td>
+	                  <td>{{ data.WarnerVolume }}{# Dara son of Darab (1485) #}</td>
+	                </tr>
+	                <tr>
+	                  <th>Page</th>
+	                  <td>{{ data.MohlPage }}{# 318 #}</td>
+	                  <td>{{ data.BertelsPage }}{# 313 #}</td>
+	                  <td>{{ data.KPage }}{# &#160; #}</td>
+	                  <td>{{ data.MTPage }}{# &#160; #}</td>
+	                  <td>{{ data.WarnerPage }}{# &#160; #}</td>
+	                </tr>
+	                <tr class="even">
+	                  <th>Verse Start</th>
+	                  <td>{{ data.MohlStart }}{# 333 #}</td>
+	                  <td>{{ data.BertelsStart }}{# 328 #}</td>
+	                  <td>{{ data.KStart }}{# &#160; #}</td>
+	                  <td>{{ data.MTStart }}{# &#160; #}</td>
+	                  <td>{{ data.WarnerStart }}{# &#160; #}</td>
+	                </tr>
+	                <tr>
+	                  <th>Verse End</th>
+	                  <td>{{ data.MohlEnd }}{# &#160; #}</td>
+	                  <td>{{ data.BertelsEnd }}{# &#160; #}</td>
+	                  <td>{{ data.KEnd }}{# &#160; #}</td>
+	                  <td>{{ data.MTEnd }}{# &#160; #}</td>
+	                  <td>{{ data.WarnerEnd }}{# &#160; #}</td>
+	                </tr>
+	              </tbody>
+	            </table>
+	          </div>
+
+
+	        <div id="manuscript-details-references">
+	          {% if data.references %}
+	          <h3 class="notes">References</h3>
+	          <div class="manuscript-details-list">
+	            <dl id="manuscript-details-body-meta">
+	              {% for ref in data/references %}
+	                {% if ref.key %}
+	                <dt>{{ ref/key" }}{# General #}</dt>
+	                <dd>{{ ref/value }}{# Norgren, J. &amp; Davis, E. Preliminary index of Shah-nameh illustrations. University of Michigan. Ann Arbor. USA #}</dd>
+	                {% endif %}
+				  {% endfor %}
+	            </dl>
+	          </div>
+	          {% endif %}
+	          <div class="manuscript-details-list">
+	            <dl id="manuscript-details-body-meta">
+	              <dt>This Record</dt>
+	              <dd>
+	              	Last update by  {{ data.DatabaseUser }} on {{ data.up_date }}
+	              </dd>
+	            </dl>
+	          </div>
+	          <div id="print-block">
+	            <a href="#">print this page</a>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+</div>
+</div>
+
+  </div>
+{% endblock %}
