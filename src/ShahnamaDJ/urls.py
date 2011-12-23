@@ -2,8 +2,8 @@ from django.conf.urls.defaults import patterns, include, url
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-from ShahnamaDJ.records.views import ChapterView, CountryView, IllustrationView,\
-    LocationView, ManuscriptView, SceneView
+from ShahnamaDJ.records.views import chapterView, countryView, illustrationView,\
+    locationView, manuscriptView, sceneView
 admin.autodiscover()
 
 
@@ -20,11 +20,11 @@ urlpatterns = patterns('',
     
     
     # application
-    url(r'^$', 'ShahnamaDJ.views.home', name='home'),
-    url(r'^chapter/(.*)', ChapterView.view, name='chapter'),
-    url(r'^country/(.*)', CountryView.view, name='country'),
-    url(r'^illustration/(.*)', IllustrationView.view, name='illustration'),
-    url(r'^location/(.*)', LocationView.view, name='location'),
-    url(r'^manuscript/(.*)', ManuscriptView.view, name='manuscript'),
-    url(r'^scene/(.*)', SceneView.view, name='scene'),
+    #url(r'^$', 'ShahnamaDJ.views.home', name='home'),
+    url(r'^chapter/(.*)', chapterView, name='chapter'),
+    url(r'^country/(.*)', countryView, name='country'),
+    url(r'^illustration/(.*)', illustrationView, name='illustration'),
+    url(r'^location/(.*)', locationView, name='location'),
+    url(r'^manuscript/(.*)', manuscriptView, name='manuscript'),
+    url(r'^scene/(.*)', sceneView, name='scene'),
 )
