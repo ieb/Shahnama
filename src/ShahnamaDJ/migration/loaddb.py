@@ -6,7 +6,31 @@ This loads data from a tree of Json files into ShahnamaDJ
 import sys
 import os
 import json
-from ShahnamaDJ.settings import SOURCE_DATA, SOURCE_DATA_TYPES
+from ShahnamaDJ.settings import SOURCE_DATA
+from ShahnamaDJ.records.models import Chapter, Country, Location, Manuscript,\
+    Scene, Illustration, Authority
+
+# This the the mapping of folder into Object type for the json data
+# eg SOURCE_DATA/chapter contains json files for Chapter objects
+SOURCE_DATA_TYPES = {
+        'chapter' : Chapter,
+        'country' : Country,
+        'location' : Location,
+        'manuscript' : Manuscript,
+        'scene' : Scene,
+        'illustration' : Illustration,
+        'ms-type' : Authority,
+        'ms-author' : Authority,
+        'ms-status' : Authority,
+        'ms-title' : Authority,
+        'ms-lang' : Authority,
+        'bib-class' : Authority,
+        'record-status' : Authority,
+        'chapter-k' : Authority,
+        'chapter-b' : Authority,
+        'chapter-ds' : Authority,
+        'ill-format' : Authority
+        }
 class DBLoader(object):
     '''
     Load the data from files into the object model

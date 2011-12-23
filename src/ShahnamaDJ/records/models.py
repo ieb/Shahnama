@@ -5,7 +5,7 @@ import json
 
 class JsonModel(models.Model):
     id = models.AutoField(primary_key=True)
-    key = models.TextField(max_lenght=32)
+    key = models.TextField(max_length=32)
     data = models.TextField()
     
     def buildRelationships(self):

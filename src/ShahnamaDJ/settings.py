@@ -1,6 +1,4 @@
 # Django settings for ShahnamaDJ project.
-from ShahnamaDJ.records.models import Chapter, Country, Location, Manuscript,\
-    Scene, Illustration, Authority
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -122,6 +120,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
+    'ShahnamaDJ.records'
 )
 
 # A sample logging configuration. The only tangible logging
@@ -150,24 +149,3 @@ LOGGING = {
 # This is the location of the JSON data dumped from the main database
 SOURCE_DATA = '/Users/ieb/Caret/shahnama/sh2/sh2dj/sourcedata'
 
-# This the the mapping of folder into Object type for the json data
-# eg SOURCE_DATA/chapter contains json files for Chapter objects
-SOURCE_DATA_TYPES = {
-        'chapter' : Chapter,
-        'country' : Country,
-        'location' : Location,
-        'manuscript' : Manuscript,
-        'scene' : Scene,
-        'illustration' : Illustration,
-        'ms-type' : Authority,
-        'ms-author' : Authority,
-        'ms-status' : Authority,
-        'ms-title' : Authority,
-        'ms-lang' : Authority,
-        'bib-class' : Authority,
-        'record-status' : Authority,
-        'chapter-k' : Authority,
-        'chapter-b' : Authority,
-        'chapter-ds' : Authority,
-        'ill-format' : Authority
-        }
