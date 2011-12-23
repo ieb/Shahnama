@@ -2,7 +2,9 @@ import re
 from xml.etree.ElementTree import ElementTree
 from xml.sax.saxutils import escape
 from django.template import loader
-from ShahnamaDJ.records.views import AuthorityView
+from ShahnamaDJ.records.models import Authority
+from ShahnamaDJ.settings import TEMPLATE_DIRS
+import os
 
 def _th(x):
     try:
@@ -38,8 +40,11 @@ re_rpunc = re.compile(r"\s+([\.,;:])")
 class StringPattern:
     def __init__(self,filename):
         self._xml = ElementTree()
-        (source, origin) = loader.find_template(filename)
-        self._xml.parse(source)
+        for p in TEMPLATE_DIRS:
+            filePath = "%s/%s" % ( p, filename)
+            if os.path.isfile(filePath):
+                self._xml.parse(filePath)
+                return
 
     def _apply_text(self,node,text):
         return escape(unicode(text))
@@ -61,7 +66,7 @@ class StringPattern:
             if k and k in model and model[k]:
                 v = model[k]
             if v and 'authority' in node.attrib:
-                v = AuthorityView(node.attrib['authority'],v)
+                v = Authority.objects.get(name=node.attrib['authority'],key=v).data
             return escape(unicode(v))
         elif node.tag == 'join':
             out = [self._apply_node(x,request,model) for x in node]

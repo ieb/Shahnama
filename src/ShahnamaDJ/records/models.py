@@ -30,6 +30,9 @@ class JsonModel(models.Model):
 class Chapter(JsonModel):
     None
 
+class Reference(JsonModel):
+    None
+
 
 class Country(JsonModel):
     name = models.CharField(max_length=64)

@@ -2,7 +2,7 @@
 
 from django.shortcuts import render_to_response
 from ShahnamaDJ.records.models import Chapter, JsonModel, Country, Illustration,\
-    Authority, Location, Manuscript, Scene
+    Authority, Location, Manuscript, Scene, Reference
 import re
 import collections
 from ShahnamaDJ.datatypes.gregorian import Gregorian
@@ -50,19 +50,19 @@ class GalleryView(object):
 class AbstractView(object):
     
     model = None
-    id = None
+    key = None
     request = None
     json = None
     summary = None
     gallery = None
 
     
-    def __init__(self, request, id=None, model=None):
+    def __init__(self, request, key=None, model=None):
         self.request = request
         if model is not None:
             self.model = model
-        elif id is not None:
-            self.id = id
+        elif key is not None:
+            self.key = key
             
     def loadModel(self):
         None
@@ -77,20 +77,15 @@ class AbstractView(object):
     
 
 re_code = re.compile(r"(-?[0-9]+)(.*)")
+    
 class ChapterView(AbstractView):
-    
-    
-    @staticmethod
-    def view(request, id):
-        chapterView = ChapterView(request, id=id)
-        return chapterView.render()
-    
+       
     def loadModel(self):
-        return Chapter.objects.get(id=self.id)
+        return Chapter.objects.get(key=self.key)
 
             
     def render(self):
-        return render_to_response("chapter.html", self.summary())
+        return render_to_response("chapter.djt.html", self.summary())
     
     def summary(self,quick = False):
         if self.summary is None:
@@ -106,7 +101,7 @@ class ChapterView(AbstractView):
                     'code': code,
                     'url': "%s/chapter/%s" % (self.request.server_root)
                 })
-                if self.id is not None and self.id == chapter.id:
+                if self.key is not None and self.key == chapter.key:
                     gallery.galleryData = [ SceneView(self.request, model = x ).gallery() for x in chapter.scenes]
                 
             extra = {
@@ -133,13 +128,9 @@ class ChapterView(AbstractView):
     
 re_az = re.compile(r"^[a-z].*$")
 class CountryView(AbstractView):
-    @staticmethod
-    def view(request, id):
-        countryView = CountryView(request, id=id)
-        return countryView.render()
 
     def render(self):
-        return render_to_response("country.html", self.summary())
+        return render_to_response("country.djt.html", self.summary())
     
     def summary(self, quick = False):
         if self.summary is None:
@@ -152,11 +143,11 @@ class CountryView(AbstractView):
                     hkey = name.lower()[0]
                 else:
                     hkey = "Other"
-                if id and id == country.id:
+                if self.key and self.key == country.key:
                     gallery.galleryData = [LocationView(self.request, model = x).gallery() for x in country.location_set]
                 countriesMap[hkey].append({
                     'name': name,
-                    'url': "%s/country/%s" % (self.request.server_root,country.id)
+                    'url': "%s/country/%s" % (self.request.server_root,country.key)
                 })
             extra = {
                 'countries': sorted([{'head': k.upper(), 'body': v} for (k,v) in countries.iteritems()],key = lambda x: (x['head'] == 'Other',x['head'])),
@@ -198,16 +189,13 @@ class IllustrationView(AbstractView):
     
     painting = None
     
-    @staticmethod
-    def view(request, id):
-        return IllustrationView(request, id = id).render()
     
     def render(self):
-        return render_to_response("illustration.html", self.summary())
+        return render_to_response("illustration.djt.html", self.summary())
     
     def loadObject(self):
         if self.model is None:
-            self.model = Illustration.objects.get(id = self.id)
+            self.model = Illustration.objects.get(key = self.key)
             
     
     def summary(self, request, illustrationObj, quick = False):
@@ -224,7 +212,7 @@ class IllustrationView(AbstractView):
             chapter = ChapterView(self.request, model=self.model.chapter)
             extra = {
                 'painting_url': self.painting(),
-                'url': "%s/illustration/%s" % (request.server_root,id),
+                'url': "%s/illustration/%s" % (request.server_root,self.key),
                 'form': form_tmpl.apply(self.request,self.json),
                 'work': AuthorityView('ms-title', self.json['TitleSerial']).json(),
                 'chapter': chapter.json(),
@@ -282,16 +270,13 @@ class IllustrationView(AbstractView):
 
 class LocationView(AbstractView):
     
-    @staticmethod
-    def view(request, id):
-        return LocationView(request, id = id).render()
     
     def render(self):
-        return render_to_response("location.html", self.summary())
+        return render_to_response("location.djt.html", self.summary())
     
     def loadObject(self):
         if self.model is None:
-            self.model = Location.objects.get(id = self.id)
+            self.model = Location.objects.get(key = self.key)
 
         
         
@@ -330,17 +315,14 @@ class LocationView(AbstractView):
 
 
 class ManuscriptView(AbstractView):
-    @staticmethod
-    def view(request, id):
-        return ManuscriptView(request, id = id).render()
     
     
     def render(self):
-        return render_to_response("manuscript.html", self.summary())
+        return render_to_response("manuscript.djt.html", self.summary())
     
     def loadObject(self):
         if self.model is None:
-            self.model = Manuscript.objects.get(id = self.id)
+            self.model = Manuscript.objects.get(key = self.key)
 
 
     
@@ -370,7 +352,7 @@ class ManuscriptView(AbstractView):
                     return self._image_url(type)
             if len(self.json['illustrations']):
                 for d in self.json['illustrations']:        
-                    p = IllustrationView(self.request, id=d).painting()
+                    p = IllustrationView(self.request, key=d).painting()
                     if p:
                         self.canon_image = p
                         break
@@ -432,17 +414,14 @@ class ManuscriptView(AbstractView):
 
 
 class SceneView(AbstractView):
-    @staticmethod
-    def view(request, id):
-        return SceneView(request, id = id).render()
     
     
     def render(self):
-        return render_to_response("scene.html", self.summary())
+        return render_to_response("scene.djt.html", self.summary())
     
     def loadObject(self):
         if self.model is None:
-            self.model = Scene.objects.get(id = self.id)
+            self.model = Scene.objects.get(key = self.key)
     
     def loadViewSummary(self, quick = False):
         if self.summary is None:
@@ -469,3 +448,37 @@ class SceneView(AbstractView):
     
     def gallery(self):
         None
+
+class ReferenceView(AbstractView):
+    def loadObject(self):
+        if self.model is None:
+            self.model = Reference.objects.get(key = self.key)
+
+    def sentence_summary(self):
+        self.loadJson();
+        self.json['bib-class'] = AuthorityView('bib-class', self.json['biblioClassificationID']).json()
+        return citation_tmpl.apply(self.request,self.json)
+
+citation_tmpl = StringPattern('citation.stb')
+
+
+def locationView(request, key):
+    return LocationView(request, key = key).render()
+
+def illustrationView(request, key):
+    return IllustrationView(request, key = key).render()
+
+def countryView(request, key):
+    countryView = CountryView(request, key=key)
+    return countryView.render()
+
+def manuscriptView(request, key):
+        return ManuscriptView(request, key = key).render()
+
+def sceneView(request, key):
+        return SceneView(request, key = key).render()
+
+def chapterView(request, key):
+        chapterView = ChapterView(request, key=key)
+        return chapterView.render()
+
