@@ -5,11 +5,15 @@
     		<img class="grid-image" src="{{ ill.image }}" />
     		{% else %}
     		<img class="grid-image" src="{{ assets }}/none.png"/>
+    		{% endif %}
     	</a>
-    	<span class="grid-data"><span class="list-pre" >{{ ill.index }}{{# 016v £}</span>
-    	   {%if ill.title %}
-    	      {% if ill.index %}, {% endif %} 
+    	<span class="grid-data"><span class="list-pre" >{{ ill.index }}{{# 016v #}</span>
+    	   {% if ill.title %}
+    	      {% if ill.index %}
+    	      , 
+    	      {% endif %} 
     		  {{ ill.title }}{# Illuminated title page (verso side) #}
+    	   {% endif %}
 		</span>
 	</li>
 	{% endfor %}

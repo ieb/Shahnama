@@ -1,4 +1,4 @@
-{% extends "frame.html" %}
+{% extends "frame.djt.html" %}
 
 
 {% block head %}
@@ -64,7 +64,7 @@
 				    {% for entry in data.capters %}
 						<td>{{ entry.code }}</td>
 						<td>
-							<a href="{{ entry/url }}" >{{ entry.name }}</a>
+							<a href="{{ entry.url }}" >{{ entry.name }}</a>
 						</td>
 					{% endfor %}
                     </tr>
