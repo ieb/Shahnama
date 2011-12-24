@@ -1,4 +1,4 @@
-{% extends "frame.html" %}
+{% extends "frame.djt.html" %}
 
 {% block head %}  
     <link rel="stylesheet" type="text/css" href="{{ assets }}/manuscript.css"/>
@@ -22,7 +22,7 @@
         <div id="frame-main-left">
           <div id="main-ill">
             {% if data.painting_url %}
-            <img  src="{{ data/painting_url }}"/>
+            <img  src="{{ data.painting_url }}"/>
             {% else %}
             <img  src="{{ assets }}/none.png"/>
             {% endif %}
@@ -31,14 +31,14 @@
         <div id="frame-main-right">
           <div id="manuscript-jumper">
             ms page: 
-            {% if data.prev-url %}
+            {% if data.prev_url %}
              <span title=".ui-icon-seek-next"  class="grey-box ui-corner-all inline-block">
-              <a class="icon-prev" href="{{ data.prev-url }}" />
+              <a class="icon-prev" href="{{ data.prev_url }}" />
             </span>
             {% endif %}
-            {% if data.next-url %}
+            {% if data.next_url %}
             <span title=".ui-icon-seek-next" class="grey-box ui-corner-all inline-block">
-              <a class="icon-next" href="{{ data.next-url }}" />
+              <a class="icon-next" href="{{ data.next_url }}" />
             </span>
             {% endif %}
           </div>
@@ -57,14 +57,14 @@
                 </dd>
                 <dt>Depicts</dt>
                 <dd>
-                	<a href="{{ data/sc_url }}">{{ data/sc_name }}</a>, in 
-                	<a href="{{ data/ch_url }}">{{ data/ch_name }}</a>
+                	<a href="{{ data.sc_url }}">{{ data.sc_name }}</a>, in 
+                	<a href="{{ data.ch_url }}">{{ data.ch_name }}</a>
                 </dd>
               </dl>
               <dl id="manuscript-details-body-main">
                 {% if data.work %}
                 <dt>Work</dt>
-                <dd>{{ data/work }}</dd>
+                <dd>{{ data.work }}</dd>
                 {% endif %}
                 {% if data.date %}
                 <dt>Date</dt>
@@ -105,9 +105,9 @@
                     <tr class="even">
                       <th>Chapter</th>
                       <td>{{ data.chapter.ChapterName }}{# Dara son of Darab (14 years) #}</td>
-                      <td>{{ data.chapter-b }}{# Dara son of Darab (453) #}</td>
-                      <td>{{ data.chapter-k }}{# Dara son of Darab (459) #}</td>
-                      <td>{{ data.chapter-ds }}{# Dara son of Darab (1485) #}</td>
+                      <td>{{ data.chapter_b }}{# Dara son of Darab (453) #}</td>
+                      <td>{{ data.chapter_k }}{# Dara son of Darab (459) #}</td>
+                      <td>{{ data.chapter_ds }}{# Dara son of Darab (1485) #}</td>
                     </tr>
                     <tr>
                       <th>First Line</th>

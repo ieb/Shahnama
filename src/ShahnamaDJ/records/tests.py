@@ -19,7 +19,6 @@ class SimpleTest(TestCase):
 
 class TestTemplates(TestCase):
     def _load_template(self, templateName, context):
-        print "Loading template %s " % (templateName)
         return render_to_response(templateName, context)
 
     def test_chapter(self):
@@ -44,7 +43,7 @@ class TestTemplates(TestCase):
         self._load_template("illustration.djt.html", dict())
 
     def test_image_upload(self):
-        self._load_template("imageupload.djt.html", dict())
+        self._load_template("image-upload.djt.html", dict())
 
     def test_image_framed(self):
         self._load_template("img-framed.djt.html", dict())

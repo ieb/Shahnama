@@ -1,4 +1,4 @@
-{% extends "frame.html" %}
+{% extends "frame.djt.html" %}
   
 {% block head %}
         <link rel="stylesheet" type="text/css" href="{{ assets }}/front.css"/>
@@ -41,15 +41,15 @@
                     <h3>
                         <a href="{{ value.url }}">
                             <img src="{{ value.thumbnail }}"  width="96" height="70"/>
-                        <span>{{ value.short-title }}</span>
+                        <span>{{ value.short_title }}</span>
                         </a>
                     </h3>
-                      <span>{{ value.short-text }}</span>
+                      <span>{{ value.short_text }}</span>
                 </li>
               {% endfor %}
             </ul>
             <div id="new-event">
-              <a href="#" href="{{ server.page-create }}">new news/event ...</a>
+              <a href="#" href="{{ server.page_create }}">new news/event ...</a>
             </div>
         </div>      
   </div>

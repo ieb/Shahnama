@@ -1,4 +1,4 @@
-{% extends "frame.html" %}
+{% extends "frame.djt.html" %}
 {% block head %}  
     <link rel="stylesheet" type="text/css" href="{{ assets }}/manuscript.css"/>    
         
@@ -147,9 +147,9 @@
 	          <h3 class="notes">References</h3>
 	          <div class="manuscript-details-list">
 	            <dl id="manuscript-details-body-meta">
-	              {% for ref in data/references %}
+	              {% for ref in data.references %}
 	                {% if ref.key %}
-	                <dt>{{ ref.key" }}{# General #}</dt>
+	                <dt>{{ ref.key }}{# General #}</dt>
 	                <dd>{{ ref.value }}{# Norgren, J. &amp; Davis, E. Preliminary index of Shah-nameh illustrations. University of Michigan. Ann Arbor. USA #}</dd>
 	                {% endif %}
 				  {% endfor %}

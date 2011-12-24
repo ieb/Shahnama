@@ -1,4 +1,4 @@
-{% extends "frame.html" %}
+{% extends "frame.djt.html" %}
 
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{{ assets }}/front.css"/>
@@ -92,10 +92,10 @@
     </div>
 		<div>
 			<p>
-	  	Title: <input type="text" id="short-title" name="short-title" value="" value="{{ data.short-title }}"
+	  	Title: <input type="text" id="short-title" name="short-title" value="" value="{{ data.short_title }}"
   				 	 style="width: 200px"/> <!-- XXX --> <br/>(max 4 words)
 			</p><p>
-	  	Text: <input type="text" id="short-text" name="short-text" value="" value="{{ data.short-text }}"
+	  	Text: <input type="text" id="short-text" name="short-text" value="" value="{{ data.short_text }}"
   				   style="width: 200px"/> <!-- XXX --> <br/>(max 12 words)
   		</p>
         <p>
@@ -133,7 +133,7 @@
 					Current main image:
 				</p>
 				<p>
-					<img class="main-image  optional-image" src={{ main-img }}" width="100%" style="border: 4px solid black;" id="main-img"/>
+					<img class="main-image  optional-image" src={{ main_img }}" width="100%" style="border: 4px solid black;" id="main-img"/>
 				</p>
 				<p>
 					<button class="image-uploader" name="main-image">add/change main image</button>

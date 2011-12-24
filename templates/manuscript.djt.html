@@ -1,4 +1,4 @@
-{% extends "frame.html" %}
+{% extends "frame.djt.html" %}
 
 
 {% block head %}
@@ -69,19 +69,19 @@
 	  <div id="frame-main-right">
 	    <div id="manuscript-jumper">
             mss:
-            {% if data.prev-url %} 
+            {% if data.prev_url %} 
             <span title=".ui-icon-seek-next" class="grey-box ui-corner-all inline-block">
-              <a class="icon-prev" href="{{ data.prev-url }}" href="#"/>
+              <a class="icon-prev" href="{{ data.prev_url }}" href="#"/>
             </span>
             {% endif %} 
-            {% if data.next-url %} 
+            {% if data.next_url %} 
             <span title=".ui-icon-seek-next" class="grey-box ui-corner-all inline-block">
-              <a class="icon-next" href="{{ data.next-url }}" href="#"/>
+              <a class="icon-next" href="{{ data.next_url }}" href="#"/>
             </span>
             {% endif %} 
 	    </div>
 	    <div id="manuscript-block"><b>{{ data.AccessionNumber }}{# Ryl Pers 910 #}</b>,
-			    <a href="{{ data/location_url }}" href="#">{{ data.location_text }}{# Manchester, John Rylands University Library of Manchester #}</a>,
+			    <a href="{{ data.location_url }}" href="#">{{ data.location_text }}{# Manchester, John Rylands University Library of Manchester #}</a>,
 			    <a href="{{ data.country_url }}" >{{ data.location_text }}{# UK #}</a>.
 	    </div>
 	    <div id="manuscript-details">
@@ -91,7 +91,7 @@
 	          <dd>{{ data.date }}{# 26 May 1518 (6 Jumada I 924) #}</dd>
               {% if data.origin %}
 	          <dt>Origin</dt>
-	          <dd>{{ data/origin }}{# Tabriz #}</dd>
+	          <dd>{{ data.origin }}{# Tabriz #}</dd>
 	          {% endif %}
 	          <dt>Size (h x w)</dt>
 	          <dd>{{ data.size }}{# page 311 x 228 mm, text 228 x 152 mm #}</dd>
@@ -99,7 +99,7 @@
 	          <dd>{{ data.text }}{# 6 columns, 20 rows, Poor Nasta'liq #}</dd>
               {% if data.state %}
 	          <dt>Type and State</dt>
-	          <dd>{{ data/state }}{#Codex, complete, 564 extant folios, 3 illuminations, 101 illustrations of The Shahnama #}</dd>
+	          <dd>{{ data.state }}{#Codex, complete, 564 extant folios, 3 illuminations, 101 illustrations of The Shahnama #}</dd>
               {% endif %}
               {% if data.pages %}
 	          <dt>Pages</dt>

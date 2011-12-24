@@ -19,10 +19,11 @@
 		  <div class="panel-overlay">
 		    <h3>{{ ill.title }}{# Illuminated title page (verso side) #}</h3>
               <p>
-                {% if ill.index %}
-                <b>{{ ill.index }}{# Ryl Pers 910 #}</b>
-                  {if % ill.text %}, {{ ill.text }} {% endif %}
-               {% elseif ill.text %}
+               {% if ill.index %}
+               <b>{{ ill.index }}{# Ryl Pers 910 #}</b>
+                  {% if  ill.text %}, {% endif %}
+               {% endif %}
+               {% if ill.text %}
                   {{ ill.text }}
                {% endif %}
               </p>
