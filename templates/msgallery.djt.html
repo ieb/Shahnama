@@ -1,3 +1,4 @@
+    {% if data.gallery.decorated %}
     {% for ill in data.gallery.decorated %}
 	<li>
 	    {% if ill.image %}
@@ -31,5 +32,6 @@
 		</div>
 	</li>
 	{% endfor %}
+	{% endif %}
 
 	

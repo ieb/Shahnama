@@ -2,13 +2,14 @@
 #
 # This script dumps the MySQL Shahnama database into json files on disk that act as a source for the new data.
 #
+import os
 if __name__ != '__main__':
-    return
+    exit
 
 import json
 import MySQLdb
 import collections
-from ShahnamaDJ.settings import SOURCE_DATA
+from settings import SOURCE_DATA
 
 
 base = SOURCE_DATA
@@ -47,9 +48,14 @@ tables = {
 full_authorities = set(['country'])
 
 conn = MySQLdb.connect (host = "localhost",
-                        user = "root",
-                        passwd = "",
+                        user = "shahnama",
+                        passwd = "shahnama",
                         db = "shahnama")
+
+def checkDir(d):
+    if not os.path.isdir(d):
+        os.makedirs(d)
+
 
 authorities = {}
 built = collections.defaultdict(dict)
@@ -66,11 +72,13 @@ for (table,d) in tables.iteritems():
                 data['order'] = row[d['order']]
             authorities[(d['authority'],row[d['serial']])] = data            
         else:
-            out = open("%s/%s/%s" % (base,d['dir'],row[d['serial']]),"w")
+            checkDir("%s/%s" % (base,d['dir']))
+            out = open("%s/%s/x%s" % (base,d['dir'],row[d['serial']]),"w")
             if 'has' in d:
                 for (key,d2) in d['has'].iteritems():
                     cursor2 = conn.cursor (MySQLdb.cursors.DictCursor)
                     index = d2['from'] if 'from' in d2 else d['serial']
+                    cursor2.execute ("SELECT * FROM %s WHERE %s = '%s'" % (d2['table'],d2['key'],row[index]))
                     result_set2 = cursor2.fetchall ()
                     v = []
                     for row2 in result_set2:
@@ -101,8 +109,10 @@ for (auth,v) in built.iteritems():
         authorities[(auth,id)] = { 'value': value, 'serial': id, 'type': auth }
 for ((auth,serial),data) in authorities.iteritems():
     if auth in full_authorities:
-        out = open("%s/%s/%s" % (base,auth,serial),"w")
+        checkDir("%s/%s" % (base,auth))
+        out = open("%s/%s/x%s" % (base,auth,serial),"w")
     else:
-        out = open("%s/authority/%s--%s" % (base,auth,serial),"w")
+        checkDir("%s/authority" % (base))
+        out = open("%s/authority/x%s--%s" % (base,auth,serial),"w")
     json.dump(data,out,ensure_ascii = False)
     out.close()

@@ -1,7 +1,6 @@
 import re
 from xml.etree.ElementTree import ElementTree
 from xml.sax.saxutils import escape
-from django.template import loader
 from ShahnamaDJ.records.models import Authority
 from ShahnamaDJ.settings import TEMPLATE_DIRS
 import os
@@ -40,11 +39,15 @@ re_rpunc = re.compile(r"\s+([\.,;:])")
 class StringPattern:
     def __init__(self,filename):
         self._xml = ElementTree()
-        for p in TEMPLATE_DIRS:
+        testDirs = TEMPLATE_DIRS
+        if ( isinstance(testDirs, basestring)):
+            testDirs = [ TEMPLATE_DIRS ]
+        for p in testDirs:
             filePath = "%s/%s" % ( p, filename)
             if os.path.isfile(filePath):
                 self._xml.parse(filePath)
                 return
+        raise RuntimeError("Unable to load tempalte %s " % (filename))
 
     def _apply_text(self,node,text):
         return escape(unicode(text))

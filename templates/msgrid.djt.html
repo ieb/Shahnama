@@ -1,4 +1,5 @@
-  	{% for ill in data.galary.main %}
+    {%if data.gallery.main %}
+  	{% for ill in data.gallery.main %}
   	<li>
     	<a class="grid-link" href="{{ ill.url }}">
     	    {% if ill.image %}
@@ -17,3 +18,4 @@
 		</span>
 	</li>
 	{% endfor %}
+	{% endif %}

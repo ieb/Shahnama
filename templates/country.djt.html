@@ -55,6 +55,7 @@
 	  <div id="frame-main-right">
 	    <div id="manuscript-details">
 	      <div class="manuscript-details-list">
+	        {% if data.contries %}
 			<dl>
 			{% for entry in data.contries %}
 				<dt>{{ entry.head }}</dt>
@@ -67,6 +68,7 @@
 				</dd>
 			{% endfor %}
 			</dl>
+			{% endif %}
 
 	        <div id="manuscript-details-references">
 	          <div id="print-block">

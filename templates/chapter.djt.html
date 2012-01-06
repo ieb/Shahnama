@@ -61,12 +61,16 @@
 			<table>
 				<tbody>
                     <tr>
+                    {% if data.chapters %}
 				    {% for entry in data.capters %}
 						<td>{{ entry.code }}</td>
 						<td>
 							<a href="{{ entry.url }}" >{{ entry.name }}</a>
 						</td>
 					{% endfor %}
+                    {% else %}
+                    <td>--none--</td>
+					{% endif %}
                     </tr>
 				</tbody>
 			</table>

@@ -4,9 +4,11 @@ when you run "manage.py test".
 
 Replace this with more appropriate tests for your application.
 """
-
+from tidylib import tidy_document, tidy_fragment
 from django.test import TestCase
 from django.shortcuts import render_to_response
+from ShahnamaDJ.views.stringbuilder import StringPattern
+from django.test.client import RequestFactory
 
 
 class SimpleTest(TestCase):
@@ -19,7 +21,9 @@ class SimpleTest(TestCase):
 
 class TestTemplates(TestCase):
     def _load_template(self, templateName, context):
-        return render_to_response(templateName, context)
+        response = render_to_response(templateName, context)
+        document, errors = tidy_document(response.content)
+        self.assertEqual(len(errors),0,"%s\n================\n%s\n=================================\n" % (errors, response.content))
 
     def test_chapter(self):
         self._load_template("chapter.djt.html", dict())
@@ -68,3 +72,14 @@ class TestTemplates(TestCase):
 
     def test_scene(self):
         self._load_template("scene.djt.html", dict())
+
+class TestStringBuilderTemplates(TestCase):
+    def test_stringbuilder(self):
+        requestFactory = RequestFactory()
+        get = requestFactory.get("/country/1")
+        for t in ['ms-state.stb','ms-text.stb','ms-origin.stb','ms-pages.stb',
+                  'ill-form.stb','ill-painter.stb','ill-folio.stb','loc-contact.stb',
+                  'loc-address.stb']:
+            template = StringPattern(t)
+            self.assertIsNotNone(template.apply(get, dict()),"Template %s fails" % (t))
+            

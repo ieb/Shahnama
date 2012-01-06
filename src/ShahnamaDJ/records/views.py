@@ -8,8 +8,9 @@ import collections
 from ShahnamaDJ.datatypes.gregorian import Gregorian
 from ShahnamaDJ.datatypes.hijri import Hijri
 from ShahnamaDJ.views import recordutils
-from ShahnamaDJ.views.recordutils import format_date, wash_notes, refs_tmpl
+from ShahnamaDJ.views.recordutils import format_date, wash_notes
 from ShahnamaDJ.views.stringbuilder import StringPattern
+from ShahnamaDJ.settings import STATIC_URL, PAINTINGS_URL
 
 
 state_tmpl = StringPattern('ms-state.stb')
@@ -53,8 +54,8 @@ class AbstractView(object):
     key = None
     request = None
     json = None
-    summary = None
-    gallery = None
+    summaryMap = None
+    galleryMap = None
 
     
     def __init__(self, request, key=None, model=None):
@@ -72,6 +73,18 @@ class AbstractView(object):
             self.loadModel()
             self.json = JsonModel.safe_to_json(self.model)
             
+    def makeJsonSafe(self):
+        if self.json is None:
+            self.json = {}
+
+    def buildContext(self, data):
+        x = {
+            'assets' : STATIC_URL,
+            'data' : data
+            }
+        print x
+        return x
+
     class Meta:
         abstract = True
     
@@ -79,16 +92,18 @@ class AbstractView(object):
 re_code = re.compile(r"(-?[0-9]+)(.*)")
     
 class ChapterView(AbstractView):
-       
+    
     def loadModel(self):
         return Chapter.objects.get(key=self.key)
 
             
     def render(self):
-        return render_to_response("chapter.djt.html", self.summary())
+        return render_to_response("chapter.djt.html", self.buildContext(self.summary()))
     
     def summary(self,quick = False):
-        if self.summary is None:
+        print "Calling Summary for %s " % (self.summaryMap)
+        if self.summaryMap is None:
+            print "Creating Summary"
             allChapters = Chapter.objects.all()
             chapters = []
             gallery = GalleryView()
@@ -109,8 +124,8 @@ class ChapterView(AbstractView):
                 'chapters': sorted(chapters,key = lambda x: self._order(x['code'])),
                 'gallery': gallery.emit(),
             }
-            self.summary = dict(extra.items())
-        return self.summary
+            self.summaryMap = dict(extra.items())
+        return self.summaryMap
 
     def _order(self,s):
         m = re_code.match(s)
@@ -120,9 +135,9 @@ class ChapterView(AbstractView):
             return (0,'',s)
     
     def gallery(self):
-        if self.gallery is None:
-            self.gallery = dict()
-        return self.gallery
+        if self.galleryMap is None:
+            self.galleryMap = dict()
+        return self.galleryMap
     
     
     
@@ -130,36 +145,39 @@ re_az = re.compile(r"^[a-z].*$")
 class CountryView(AbstractView):
 
     def render(self):
-        return render_to_response("country.djt.html", self.summary())
+        return render_to_response("country.djt.html", self.buildContext(self.summary()))
     
     def summary(self, quick = False):
-        if self.summary is None:
-            countries = Country.objects.all()    
-            countriesMap = collections.defaultdict(list)
-            gallery = GalleryView()
-            for country in countries:
-                name = country.name
-                if re_az.match(name.lower()):
-                    hkey = name.lower()[0]
-                else:
-                    hkey = "Other"
-                if self.key and self.key == country.key:
-                    gallery.galleryData = [LocationView(self.request, model = x).gallery() for x in country.location_set]
-                countriesMap[hkey].append({
-                    'name': name,
-                    'url': "%s/country/%s" % (self.request.server_root,country.key)
-                })
-            extra = {
-                'countries': sorted([{'head': k.upper(), 'body': v} for (k,v) in countries.iteritems()],key = lambda x: (x['head'] == 'Other',x['head'])),
-                'gallery': gallery.emit(),
-            }
-            self.summary = dict(extra.items())
-        return self.summary
+        if self.summaryMap is None:
+            countries = Country.objects.all()
+            if countries:
+                countriesMap = collections.defaultdict(list)
+                gallery = GalleryView()
+                for country in countries:
+                    name = country.name
+                    if re_az.match(name.lower()):
+                        hkey = name.lower()[0]
+                    else:
+                        hkey = "Other"
+                    if self.key and self.key == country.key:
+                        gallery.galleryData = [LocationView(self.request, model = x).gallery() for x in country.location_set]
+                    countriesMap[hkey].append({
+                        'name': name,
+                        'url': "%s/country/%s" % (self.request.server_root,country.key)
+                    })
+                extra = {
+                    'countries': sorted([{'head': k.upper(), 'body': v} for (k,v) in countries.iteritems()],key = lambda x: (x['head'] == 'Other',x['head'])),
+                    'gallery': gallery.emit(),
+                }
+                self.summaryMap = dict(extra.items())
+            else:
+                self.summaryMap = {}
+        return self.summaryMap
     
     def gallery(self):
-        if self.gallery is None:
-            self.gallery = dict()
-        return self.gallery
+        if self.galleryMap is None:
+            self.galleryMap = dict()
+        return self.galleryMap
             
 
 class AuthorityView(AbstractView):
@@ -191,67 +209,71 @@ class IllustrationView(AbstractView):
     
     
     def render(self):
-        return render_to_response("illustration.djt.html", self.summary())
+        return render_to_response("illustration.djt.html", self.buildContext(self.summary()))
     
     def loadObject(self):
         if self.model is None:
             self.model = Illustration.objects.get(key = self.key)
             
     
-    def summary(self, request, illustrationObj, quick = False):
-        if self.summary is None:
+    def summary(self, quick = False):
+        self.loadJson()
+        if self.summaryMap is None:
             self.loadJson()
-            refmap = {
-                'GeneralReferences1': 'General',
-                'GeneralReferences2': 'General',
-                'GeneralReferences3': 'General',
-                'AttributionPainter': 'Painter',
-                'AttributionStyle': 'Style',
-                'AttributionDate': 'Date',
-            }
-            chapter = ChapterView(self.request, model=self.model.chapter)
-            extra = {
-                'painting_url': self.painting(),
-                'url': "%s/illustration/%s" % (request.server_root,self.key),
-                'form': form_tmpl.apply(self.request,self.json),
-                'work': AuthorityView('ms-title', self.json['TitleSerial']).json(),
-                'chapter': chapter.json(),
-                'chapter-k': AuthorityView('chapter-k', self.json['ChapterSerialK']).json(),
-                'chapter-b': AuthorityView('chapter-b', self.json['ChapterSerialB']).json(),
-                'chapter-ds': AuthorityView('chapter-ds', self.json['ChapterSerialDS']).json(),
-                'date': "%s (%s)" % (Hijri.date(self.json['HijriDate']),Gregorian.date(self.json['GregorianDate'])),
-                'status': AuthorityView('record-status', self.json['CompletionStatus']).json(),
-                'up_date': recordutils.format_date(self.json['DateUpdated']),
-                'painter': painter_tmpl.apply(request,self.json),
-                'references': recordutils.refs_tmpl(request,self.json,refmap),
-                'notes': recordutils.wash_notes(self.json['NotesVisible']),
-                'folio': folio_tmpl.apply(request,self.json),
-                'format': AuthorityView('ill-format', self.json['FormatSerial']).json(),
-                'prev-url': "%s/illustration/%s" % (request.server_root,self.json['chain-prev-folios-in-ms']) if self.json['chain-prev-folios-in-ms'] else '',
-                'next-url': "%s/illustration/%s" % (request.server_root,self.json['chain-next-folios-in-ms']) if self.json['chain-next-folios-in-ms'] else '',
-            }
-            if not quick:
-                manuscript = ManuscriptView(self.request, model=self.model.manuscript)
-                location = LocationView(request, self.model.manuscript.location)
-                scene = SceneView(request, illustrationObj.scene)
-                extra['ms_name'] = manuscript.summary()['AccessionNumber']
-                extra['ms_url'] = "%s/manuscript/%s" % (request.server_root,manuscript.summary()['ManuscriptSerial'])
-                extra['loc_name'] = location.summary()['FullLocationName']
-                extra['loc_url'] = "%s/location/%s" % (request.server_root,location.summary()['LocationSerial'])
-                extra['loc_city'] = location.summary()['City']
-                extra['cou_name'] = location.summary()['country']
-                extra['cou_url'] = "%s/country/%s" % (request.server_root,location.summary()['Country'])
-                extra['sc_name'] = scene.summary()['EnglishTitle']
-                extra['sc_url'] = "%s/scene/%s" % (request.server_root,scene.summary()['SceneSerial'])
-                extra['ch_name'] = scene.summary()['chapter_name']
-                extra['ch_url'] = scene.summary()['chapter_url']
-            self.summary = dict(self.json.items() + extra.items())
-        return self.summary
+            if self.json:
+                refmap = {
+                    'GeneralReferences1': 'General',
+                    'GeneralReferences2': 'General',
+                    'GeneralReferences3': 'General',
+                    'AttributionPainter': 'Painter',
+                    'AttributionStyle': 'Style',
+                    'AttributionDate': 'Date',
+                }
+                chapter = ChapterView(self.request, model=self.model.chapter)
+                extra = {
+                    'painting_url': self.painting(),
+                    'url': "%s/illustration/%s" % (self.request.server_root,self.key),
+                    'form': form_tmpl.apply(self.request,self.json),
+                    'work': AuthorityView('ms-title', self.json['TitleSerial']).json(),
+                    'chapter': chapter.json(),
+                    'chapter-k': AuthorityView('chapter-k', self.json['ChapterSerialK']).json(),
+                    'chapter-b': AuthorityView('chapter-b', self.json['ChapterSerialB']).json(),
+                    'chapter-ds': AuthorityView('chapter-ds', self.json['ChapterSerialDS']).json(),
+                    'date': "%s (%s)" % (Hijri.date(self.json['HijriDate']),Gregorian.date(self.json['GregorianDate'])),
+                    'status': AuthorityView('record-status', self.json['CompletionStatus']).json(),
+                    'up_date': recordutils.format_date(self.json['DateUpdated']),
+                    'painter': painter_tmpl.apply(self.request,self.json),
+                    'references': ReferenceView.refs_tmpl(self.request,self.json,refmap),
+                    'notes': recordutils.wash_notes(self.json['NotesVisible']),
+                    'folio': folio_tmpl.apply(self.request,self.json),
+                    'format': AuthorityView('ill-format', self.json['FormatSerial']).json(),
+                    'prev-url': "%s/illustration/%s" % (self.request.server_root,self.json['chain-prev-folios-in-ms']) if self.json['chain-prev-folios-in-ms'] else '',
+                    'next-url': "%s/illustration/%s" % (self.request.server_root,self.json['chain-next-folios-in-ms']) if self.json['chain-next-folios-in-ms'] else '',
+                }
+                if not quick:
+                    manuscript = ManuscriptView(self.request, model=self.model.manuscript)
+                    location = LocationView(self.request, self.model.manuscript.location)
+                    scene = SceneView(self.request, self.model.scene)
+                    extra['ms_name'] = manuscript.summary()['AccessionNumber']
+                    extra['ms_url'] = "%s/manuscript/%s" % (self.request.server_root,manuscript.summary()['ManuscriptSerial'])
+                    extra['loc_name'] = location.summary()['FullLocationName']
+                    extra['loc_url'] = "%s/location/%s" % (self.request.server_root,location.summary()['LocationSerial'])
+                    extra['loc_city'] = location.summary()['City']
+                    extra['cou_name'] = location.summary()['country']
+                    extra['cou_url'] = "%s/country/%s" % (self.request.server_root,location.summary()['Country'])
+                    extra['sc_name'] = scene.summary()['EnglishTitle']
+                    extra['sc_url'] = "%s/scene/%s" % (self.request.server_root,scene.summary()['SceneSerial'])
+                    extra['ch_name'] = scene.summary()['chapter_name']
+                    extra['ch_url'] = scene.summary()['chapter_url']
+                self.summaryMap = dict(self.json.items() + extra.items())
+            else:
+                self.summaryMap = {}
+        return self.summaryMap
     
     def loadViewGallery(self):
-        if self.gallery is None:
-            self.gallery = dict()
-        return self.gallery
+        if self.galleryMap is None:
+            self.galleryMap = dict()
+        return self.galleryMap
     
     def loadViewPainting(self):
         if self.painting is None:
@@ -272,7 +294,7 @@ class LocationView(AbstractView):
     
     
     def render(self):
-        return render_to_response("location.djt.html", self.summary())
+        return render_to_response("location.djt.html", self.buildContext(self.summary()))
     
     def loadObject(self):
         if self.model is None:
@@ -282,26 +304,29 @@ class LocationView(AbstractView):
         
         
     def summary(self, quick = False):
-        if self.summary is None:
+        if self.summaryMap is None:
             self.loadJson()
-            photo = ''
-            pbase = self.request.get_server_attr('paintings_url')
-            if self.json['Image']:
-                photo = "%s/Location/%s.jpg" % (pbase,self.json['Image'])
-            gallery = GalleryView()
-            if not quick:
-                gallery.galleryData = [GalleryView.entry(photo,'#',self.json['FullLocationName'],'View of location, go forward for manuscripts','','',True)]
-                gallery.galleryData.extend([ ManuscriptView(self.request, x) for x in self.model.manuscripts])
-            extra = {
-                 'country': AuthorityView('country', self.json['Country']).json(),
-                 'gallery': gallery.emit(),
-                 'up_date': format_date(self.json['DateUpdated']),
-                 'contact': contact_tmpl.apply(self.request,self.locationJson),
-                 'address': address_tmpl.apply(self.request,self.flocationJson),
-                 'notes': wash_notes(self.json['NotesVisible']),
-            }
-            self.summary = dict(self.json().items() + extra.items())
-        return self.summary
+            if self.json:
+                photo = ''
+                pbase = PAINTINGS_URL
+                if self.json and self.json['Image']:
+                    photo = "%s/Location/%s.jpg" % (pbase,self.json['Image'])
+                gallery = GalleryView()
+                if not quick:
+                    gallery.galleryData = [GalleryView.entry(photo,'#',self.json['FullLocationName'],'View of location, go forward for manuscripts','','',True)]
+                    gallery.galleryData.extend([ ManuscriptView(self.request, x) for x in self.model.manuscripts])
+                extra = {
+                     'country': AuthorityView('country', self.json['Country']).json(),
+                     'gallery': gallery.emit(),
+                     'up_date': format_date(self.json['DateUpdated']),
+                     'contact': contact_tmpl.apply(self.request,self.locationJson),
+                     'address': address_tmpl.apply(self.request,self.flocationJson),
+                     'notes': wash_notes(self.json['NotesVisible']),
+                }
+                self.summaryMap = dict(self.json().items() + extra.items())
+            else:
+                self.summaryMap = {}
+        return self.summaryMap
     
     def text(self):
         self.loadJson()
@@ -318,7 +343,7 @@ class ManuscriptView(AbstractView):
     
     
     def render(self):
-        return render_to_response("manuscript.djt.html", self.summary())
+        return render_to_response("manuscript.djt.html", self.buildContext(self.summary()))
     
     def loadObject(self):
         if self.model is None:
@@ -346,7 +371,7 @@ class ManuscriptView(AbstractView):
     def _canon_image(self):
         if self.canon_image is None:
             self.loadJson()
-            pbase = self.request.get_server_attr('paintings_url')
+            pbase = PAINTINGS_URL
             for type in ('Colophon','SamplePage'):
                 if self.jsond[type]:
                     return self._image_url(type)
@@ -361,50 +386,53 @@ class ManuscriptView(AbstractView):
     
         
     def summary(self, quick=False):
-        if self.summary is None:
+        if self.summaryMap is None:
             self.loadJson()
-            # references
-            refmap = {
-                'GeneralRef1': 'General',
-                'GeneralRef2': 'General',
-                'GeneralRef3': 'General',
-                'IllustrationReference': 'Illustrations',
-                'AttributionEstimate': 'Folio count',
-                'AttributionOrigin': 'Origin',
-                'AttributionDate': 'Date',
-            }
-            gallery = GalleryView()
-            locationView = LocationView(self.request, self.model.location)
-            loc = { 'Country': '', 'country': '' }
-            if not quick:
-                if self.json['Colophon']:
-                    gallery.galleryData.append(GalleryView.entry(self._image_url(self.request, self.json, 'Colophon'), '#', 'Colophon', self.json['ColophonNumber'], '', ''))
-                if self.json['SamplePage']:
-                    gallery.galleryData.append(GalleryView.entry(self._image_url(self.request, self.json, 'SamplePage'), '#', 'Sample page from this manuscript', '', '', ''))
-                gallery.extend([ IllustrationView(self.request, model=x) for x in self.model.illustration_set])
-                loc = locationView.summary(True)
-            extra = {
-                'gallery': gallery.emit(),
-                'size': self._size_expr(self.json['PageWidth'], self.json['PageLength'], self.json['TextWidth'], self.json['TextLength']),
-                'text': text_tmpl.apply(self.request, self.json),
-                'pages': pages_tmpl.apply(self.request, self.json),
-                'state': state_tmpl.apply(self.request, self.json),
-                'origin': origin_tmpl.apply(self.frequest, self.json),
-                'date': "%s (%s)" % (Hijri.date(self.json['HijriDate']), Gregorian.date(self.json['GregorianDate'])),
-                'references': refs_tmpl(self.request, self.json, refmap),
-                'notes': wash_notes(self.json['NotesVisible']),
-                'status': JsonModel.safe_to_json(Authority.objects.get(name='record-status', key=self.json['CompletionStatus'])),
-                'up_date': format_date(self.json['DateUpdated']),
-                'canon-image': self._canon_image(self.request, self.json),
-                'location_text': locationView.text(),
-                'location_url': '%s/location/%s' % (self.request.server_root, self.json['LocationSerial']),
-                'country': loc['country'],
-                'country_url': '%s/country/%s' % (self.request.server_root, loc['Country']),
-                'prev-url': "%s/manuscript/%s" % (self.request.server_root, self.json['chain-prev-date']) if self.json['chain-prev-date'] else '',
-                'next-url': "%s/manuscript/%s" % (self.request.server_root, self.json['chain-next-date']) if self.json['chain-next-date'] else '',
-            }
-            self.summary = dict(self.json.items() + extra.items())
-        return self.summary
+            if self.json:
+                # references
+                refmap = {
+                    'GeneralRef1': 'General',
+                    'GeneralRef2': 'General',
+                    'GeneralRef3': 'General',
+                    'IllustrationReference': 'Illustrations',
+                    'AttributionEstimate': 'Folio count',
+                    'AttributionOrigin': 'Origin',
+                    'AttributionDate': 'Date',
+                }
+                gallery = GalleryView()
+                locationView = LocationView(self.request, self.model.location)
+                loc = { 'Country': '', 'country': '' }
+                if not quick:
+                    if self.json['Colophon']:
+                        gallery.galleryData.append(GalleryView.entry(self._image_url(self.request, self.json, 'Colophon'), '#', 'Colophon', self.json['ColophonNumber'], '', ''))
+                    if self.json['SamplePage']:
+                        gallery.galleryData.append(GalleryView.entry(self._image_url(self.request, self.json, 'SamplePage'), '#', 'Sample page from this manuscript', '', '', ''))
+                    gallery.extend([ IllustrationView(self.request, model=x) for x in self.model.illustration_set])
+                    loc = locationView.summary(True)
+                extra = {
+                    'gallery': gallery.emit(),
+                    'size': self._size_expr(self.json['PageWidth'], self.json['PageLength'], self.json['TextWidth'], self.json['TextLength']),
+                    'text': text_tmpl.apply(self.request, self.json),
+                    'pages': pages_tmpl.apply(self.request, self.json),
+                    'state': state_tmpl.apply(self.request, self.json),
+                    'origin': origin_tmpl.apply(self.frequest, self.json),
+                    'date': "%s (%s)" % (Hijri.date(self.json['HijriDate']), Gregorian.date(self.json['GregorianDate'])),
+                    'references': ReferenceView.refs_tmpl(self.request, self.json, refmap),
+                    'notes': wash_notes(self.json['NotesVisible']),
+                    'status': JsonModel.safe_to_json(Authority.objects.get(name='record-status', key=self.json['CompletionStatus'])),
+                    'up_date': format_date(self.json['DateUpdated']),
+                    'canon-image': self._canon_image(self.request, self.json),
+                    'location_text': locationView.text(),
+                    'location_url': '%s/location/%s' % (self.request.server_root, self.json['LocationSerial']),
+                    'country': loc['country'],
+                    'country_url': '%s/country/%s' % (self.request.server_root, loc['Country']),
+                    'prev-url': "%s/manuscript/%s" % (self.request.server_root, self.json['chain-prev-date']) if self.json['chain-prev-date'] else '',
+                    'next-url': "%s/manuscript/%s" % (self.request.server_root, self.json['chain-next-date']) if self.json['chain-next-date'] else '',
+                }
+                self.summaryMap = dict(self.json.items() + extra.items())
+            else:
+                self.summaryMap = {}
+        return self.summaryMap
     
     def gallery(self):
         None
@@ -417,34 +445,38 @@ class SceneView(AbstractView):
     
     
     def render(self):
-        return render_to_response("scene.djt.html", self.summary())
+        return render_to_response("scene.djt.html", self.buildContext(self.summary()))
     
     def loadObject(self):
         if self.model is None:
             self.model = Scene.objects.get(key = self.key)
     
-    def loadViewSummary(self, quick = False):
-        if self.summary is None:
+    def summary(self, quick = False):
+        if self.summaryMap is None:
             self.loadJson()
-            refmap = {
-                'GeneralRef1': 'General',
-                'GeneralRef2': 'General',
-                'GeneralRef3': 'General',
-            }
-            gallery = GalleryView()
-            if not quick:
-                gallery.galleryData = [ IllustrationView(self.request, model = x) for x in self.model.illustration_set]
-            chapter = ChapterView(self.request, self.mode.chapter)
-            extra = {
-                'gallery': gallery.emit(),
-                'up_date': format_date(self.json['DateUpdated']),
-                'references': refs_tmpl(self.request,self.json,refmap),
-                'notes': wash_notes(self.json['NotesVisible']),
-                'chapter_name': chapter.json()['ChapterName'],
-                'chapter_url': "%s/chapter/%s" % (self.request.server_root,chapter.json()['ChapterSerial'])
-            }
-            self.summary = dict(self.json.items() + extra.items())
-        return self.summary;
+            if self.json:
+                refmap = {
+                    'GeneralRef1': 'General',
+                    'GeneralRef2': 'General',
+                    'GeneralRef3': 'General',
+                }
+                gallery = GalleryView()
+                if not quick:
+                    print "Model is %s " % (self.model)
+                    gallery.galleryData = [ IllustrationView(self.request, model = x) for x in self.model.illustration_set]
+                chapter = ChapterView(self.request, self.mode.chapter)
+                extra = {
+                    'gallery': gallery.emit(),
+                    'up_date': format_date(self.json['DateUpdated']),
+                    'references': ReferenceView.refs_tmpl(self.request,self.json,refmap),
+                    'notes': wash_notes(self.json['NotesVisible']),
+                    'chapter_name': chapter.json()['ChapterName'],
+                    'chapter_url': "%s/chapter/%s" % (self.request.server_root,chapter.json()['ChapterSerial'])
+                }
+                self.summaryMap = dict(self.json.items() + extra.items())
+            else:
+                self.summaryMap = {}
+        return self.summaryMap;
     
     def gallery(self):
         None
@@ -455,13 +487,33 @@ class ReferenceView(AbstractView):
             self.model = Reference.objects.get(key = self.key)
 
     def sentence_summary(self):
-        self.loadJson();
+        self.loadJson()
         self.json['bib-class'] = AuthorityView('bib-class', self.json['biblioClassificationID']).json()
         return citation_tmpl.apply(self.request,self.json)
 
+    @staticmethod
+    def refs_tmpl(request,data, refmap):
+        refs = {}
+        for (name,title) in refmap.iteritems():
+            if data[name] is not None and str(data[name]).strip() != '':
+                if not data[name] in refs:
+                    refs[data[name]] = set()
+                refs[data[name]].add(title)
+        refs_tmpl = []
+        for (ref,kd) in refs.iteritems():
+            title = recordutils.comma_ampersand_list(sorted(kd))
+            value = ReferenceView(request,key=ref).sentence_summary()
+            refs_tmpl.append({'key': title, 'value': value})
+        refs_tmpl.sort(key=lambda x: recordutils._general_first(x['key']))
+        for i in range(len(refs_tmpl)-1,0,-1):
+            if refs_tmpl[i-1]['key'] == refs_tmpl[i]['key']:
+                refs_tmpl[i]['key'] = ''
+        return refs_tmpl
+
 citation_tmpl = StringPattern('citation.stb')
 
-
+    
+    
 def locationView(request, key):
     return LocationView(request, key = key).render()
 

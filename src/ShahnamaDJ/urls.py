@@ -4,6 +4,8 @@ from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from ShahnamaDJ.records.views import chapterView, countryView, illustrationView,\
     locationView, manuscriptView, sceneView
+from ShahnamaDJ.migration import loaddb
+from ShahnamaDJ.migration.loaddb import loadDb
 admin.autodiscover()
 
 
@@ -14,6 +16,9 @@ urlpatterns = patterns('',
 
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+
+    # Load the database with information from a set of json files.
+    url(r'^admin/loaddb', loadDb),
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),

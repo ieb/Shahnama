@@ -1,6 +1,5 @@
 import datetime,re
 
-from ShahnamaDJ.views import reference
 
 
 def lcfirst(s):
@@ -52,23 +51,6 @@ def format_date(d):
 def _general_first(key):
     return (key.find('General')==-1,key)
 
-def refs_tmpl(request,data,refmap):
-    refs = {}
-    for (name,title) in refmap.iteritems():
-        if data[name] is not None and str(data[name]).strip() != '':
-            if not data[name] in refs:
-                refs[data[name]] = set()
-            refs[data[name]].add(title)
-    refs_tmpl = []
-    for (ref,kd) in refs.iteritems():
-        title = comma_ampersand_list(sorted(kd))
-        value = reference.sentence_summary(request,ref)
-        refs_tmpl.append({'key': title, 'value': value})
-    refs_tmpl.sort(key=lambda x: _general_first(x['key']))
-    for i in range(len(refs_tmpl)-1,0,-1):
-        if refs_tmpl[i-1]['key'] == refs_tmpl[i]['key']:
-            refs_tmpl[i]['key'] = ''
-    return refs_tmpl
 
 re_p_tag = re.compile("(<p>)+")
 def wash_notes(data):
