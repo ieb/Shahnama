@@ -6,6 +6,7 @@ from ShahnamaDJ.records.views import chapterView, countryView, illustrationView,
     locationView, manuscriptView, sceneView
 from ShahnamaDJ.migration import loaddb
 from ShahnamaDJ.migration.loaddb import loadDb
+from ShahnamaDJ.settings import STATIC_URL
 admin.autodiscover()
 
 
@@ -22,7 +23,9 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.djt.html', 'extra_context' : {'assets' : STATIC_URL}}),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'logout.djt.html', 'extra_context' : {'assets' : STATIC_URL}}),
+
     
     # application
     #url(r'^$', 'ShahnamaDJ.views.home', name='home'),
