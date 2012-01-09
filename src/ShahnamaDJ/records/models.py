@@ -40,14 +40,14 @@ class Country(JsonModel):
         ordering = ['name']
     
 class Location(JsonModel):    
-    location = models.ForeignKey(Country)
+    location = models.ForeignKey(Country,  blank=True, null=True, on_delete=models.SET_NULL)
     def buildRelationships(self):
         None
     
 
 class Manuscript(JsonModel):
     name = models.CharField(max_length=64)
-    location = models.ForeignKey(Location)
+    location = models.ForeignKey(Location,  blank=True, null=True, on_delete=models.SET_NULL)
     class Meta:
         ordering = ['name']
     def buildRelationships(self):
@@ -55,14 +55,14 @@ class Manuscript(JsonModel):
 
 
 class Scene(JsonModel):
-    chapter = models.ForeignKey(Chapter)
+    chapter = models.ForeignKey(Chapter,  blank=True, null=True, on_delete=models.SET_NULL)
     def buildRelationships(self):
         None
 
 class Illustration(JsonModel):
-    chapter = models.ForeignKey(Chapter)
-    manuscript = models.ForeignKey(Manuscript)
-    scene = models.ForeignKey(Scene)
+    chapter = models.ForeignKey(Chapter,  blank=True, null=True, on_delete=models.SET_NULL)
+    manuscript = models.ForeignKey(Manuscript,  blank=True, null=True, on_delete=models.SET_NULL)
+    scene = models.ForeignKey(Scene,  blank=True, null=True, on_delete=models.SET_NULL)
     def buildRelationships(self):
         
         None
