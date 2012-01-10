@@ -9,8 +9,8 @@ import json
 from ShahnamaDJ.settings import SOURCE_DATA, STATIC_URL
 from ShahnamaDJ.records.models import Chapter, Country, Location, Manuscript,\
     Scene, Illustration, Authority
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
 from django.template.context import RequestContext
@@ -40,6 +40,13 @@ SOURCE_DATA_TYPES = {
         'chapter-ds' : Authority,
         'ill-format' : Authority
         }
+'''
+This class implements an iterator that iterates through the messages produced by
+the data load operation. When the data load is complete the iterator will raise 
+a StopIteration exception. Its important that the code driving the load continues
+to iterate through all of the messages otherwise not all the operations will be 
+completed.
+'''
 class DBLoader(object):
 
     messages = None
@@ -59,7 +66,8 @@ class DBLoader(object):
         loader = toload["loader"]
         try:
             data = json.load(file("%s/%s" % (path,key)),encoding=encoding)
-            obj = loader.objects.create(key=key, data = data)
+            dataKey = loader.getKeyFromJson(data)
+            obj = loader.objects.create(id=dataKey, key=dataKey, data = json.dumps(data))
             obj.save()
             return self._log("Pass 1 %s of %s " % (i,len(self.filesToLoad)),True)
         except IntegrityError as e:
@@ -71,8 +79,13 @@ class DBLoader(object):
     def _buildRelationship(self, i):
         objectType = self.objectsToRelate[i]
         for dbobj in objectType.objects.all():
+            dbobj.clearErrors()
             dbobj.buildRelationships()
             dbobj.save()
+            errors = dbobj.getErrors()
+            for e in errors:
+                print "Added Errors %s " % e
+                self.messages.append(self._log(e))
         return self._log("Pass 2 ........... Done %s of %s " % (i, len(self.objectsToRelate)))
 
     def _log(self, message, timedMessage = False):
@@ -124,7 +137,6 @@ class DBLoader(object):
             self.objectIndex = 0
         if self.messageIndex < len(self.messages):
             self.messageIndex = self.messageIndex+1
-            print "Message  index at %s " % self.messageIndex
             return self.messages[self.messageIndex-1]
         if self.fileIndex < len(self.filesToLoad):
             self.fileIndex = self.fileIndex+1
@@ -137,24 +149,14 @@ class DBLoader(object):
                     self.messages.append(self._log("Building %s for %s " % (self.objectIndex, self.objectsToRelate[self.objectIndex])))
             else:
                 self.messages.append(self._log("Phase 2  complete"))
-            print "Object index at %s " % self.objectIndex
             return self._buildRelationship(self.objectIndex-1)
         raise StopIteration
 
 
-
-    '''
-    Load all data using the settings configured in the DJango model.
-    '''
-    def loadUsingSettings(self, feedback):
-        self.loadData(SOURCE_DATA,SOURCE_DATA_TYPES, feedback)
-
-
-def feedback(message):
-        s = render_to_string("loaddb_message.djt.html",message)
-        print s
-        yield s
-
+'''
+This is an output generator that gets messages from the load process and streams them
+out to the output stream
+'''
 def renderLoad_generator(context):
     yield render_to_string("loaddb_pre.djt.html", context )
     dbloader = DBLoader("loaddb_message.djt.html", SOURCE_DATA, SOURCE_DATA_TYPES, False)
@@ -163,7 +165,12 @@ def renderLoad_generator(context):
         yield message
     yield render_to_string("loaddb_post.djt.html", {"assets": STATIC_URL})
 
+'''
+The load view which covers both post and get. The no etag condition causes the 
+loadDb fuction to stream, bypassing the Django cache. Also A login is required
+'''
 @login_required
+@permission_required('records.loaddb')
 @condition(etag_func=None)
 def loadDb(request):
     if request.method == "POST":
