@@ -150,5 +150,6 @@ LOGGING = {
 
 # This is the location of the JSON data dumped from the main database
 SOURCE_DATA = '/Users/ieb/Caret/shahnama/sh2/sh2dj/sourcedata'
-PAINTINGS_URL = '/paintings'
+PAINTINGS_URL = 'http://www9.caret.cam.ac.uk/images-qa/70/'
+SERVER_ROOT_URL = ""
 
