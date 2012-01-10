@@ -22,8 +22,8 @@
 
 	<div id="frame-main">
 	<div id="frame-article">
+	{% if data.gallery.main %}
 	<div id="frame-main-top">
-
 		<div id="views">
 			<input type="radio" id="grid-select" name="radio"   checked="checked"/>
 			<label for="grid-select">
@@ -37,7 +37,6 @@
 			</label>
 		</div>
 	</div>
-
 	  <div id="frame-main-left">
 	    <div id="grid">
 	      <div id="grid-inner">
@@ -52,17 +51,18 @@
 	      </div>
 	    </div>
 	  </div>
+	  {% endif %}
 	  <div id="frame-main-right">
 	    <div id="manuscript-details">
 	      <div class="manuscript-details-list">
-	        {% if data.contries %}
+	        {% if data.countries %}
 			<dl>
-			{% for entry in data.contries %}
+			{% for entry in data.countries %}
 				<dt>{{ entry.head }}</dt>
 				<dd>
 					<span>
 					{% for country in entry.body %}
-						<a href="#" href="{{ country.url }}" >{{ country.name }}</a>
+						<a href="{{ country.url }}" >{{ country.name }}</a>
 					{% endfor %}
 					</span>
 				</dd>
