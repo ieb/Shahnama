@@ -25,63 +25,61 @@
 
 	<div id="frame-main">
 	<div id="frame-article">
-	
-	<div id="frame-main-top">
-		<div id="views">
-			<input type="radio" id="grid-select" name="radio"   checked="checked"/>
-			<label for="grid-select">
-				<span class="icon-grid"></span>
-				Grid
-			</label>
-			<input type="radio" id="list-select" name="radio"/>
-			<label for="list-select">
-			    <span class="icon-list"></span>
-			    List
-			</label>
-		</div>
-	</div>
-
-	  <div id="frame-main-left">
-	    <div id="grid">
-	      <div id="grid-inner">
-	        <ul>
-	            {% include "msgrid.djt.html" %}
-	        </ul>
-	      </div>
-	    </div>
-	    <div id="list">
-	      <div id="list-inner">
+	   {% if gallery.main %}
+    <div id="frame-main-top">
+        <div id="views">
+            <input type="radio" id="grid-select" name="radio"   checked="checked"/>
+            <label for="grid-select">
+                <span class="icon-grid"></span>
+                Grid
+            </label>
+            <input type="radio" id="list-select" name="radio"/>
+            <label for="list-select">
+                <span class="icon-list"></span>
+                List
+            </label>
+        </div>
+    </div>
+      <div id="frame-main-left">
+        <div id="grid">
+          <div id="grid-inner">
+            <ul>
+                <div>{% include "msgrid.djt.html" %}</div>
+            </ul>
+          </div>
+        </div>
+        <div id="list">
+          <div id="list-inner">
                 {% include "mslist.djt.html" %}
-	      </div>
-	    </div>
-	  </div>
-	  <div id="frame-main-right">
-	    <div id="manuscript-details">
-	      <div class="manuscript-details-list">
-			<table>
-				<tbody>
-                    <tr>
-                    {% if data.chapters %}
-				    {% for entry in data.capters %}
-						<td>{{ entry.code }}</td>
-						<td>
-							<a href="{{ entry.url }}" >{{ entry.name }}</a>
-						</td>
-					{% endfor %}
-                    {% else %}
-                    <td>--none--</td>
-					{% endif %}
-                    </tr>
-				</tbody>
-			</table>
-	        <div id="manuscript-details-references">
-	          <div id="print-block">
-	            <a href="#">print this page</a>
-	          </div>
-	        </div>
-	      </div>
-	    </div>
-	  </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+	
+      <div id="frame-main-right">
+        <div id="manuscript-details">
+          <div class="manuscript-details-list">
+            {% if chapters %}
+            <dl>
+            {% for entry in chapters %}
+                <dt>{{ entry.code }}</dt>
+                <dd>
+                    <span>
+                    <a href="{{ entry.url }}" >{{ entry.name }}</a>
+                    </span>
+                </dd>
+            {% endfor %}
+            </dl>
+            {% endif %}
+            <div id="manuscript-details-references">
+              <div id="print-block">
+                <a href="#">print this page</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
     </div>
 
