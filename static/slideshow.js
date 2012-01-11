@@ -100,7 +100,12 @@ function layout() {
 		var $p=what.parent();
 		var href=what.attr('href');
 		what.remove();
-		$('a.panel-insert',$p).append('<img src="'+href+'" style="display: none"/>');
+		var insertPanel = $('a.panel-insert',$p);
+		if ( !insertPanel.hasClass('panel-insert') ) {
+			alert("For the slideshow to work an a tag with class panel-insert must be present in the markup to allow the image to be loaded in that location, this tag is missing from your HTML  ");
+			return;
+		}
+		insertPanel.append('<img src="'+href+'" style="display: none"/>');
 		$img=$p.find('img');
 		if(what.hasClass('no-resize'))
 		  centre($img);
