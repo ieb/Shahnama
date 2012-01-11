@@ -88,7 +88,7 @@ class AbstractView(object):
     
     def getSafeProperty(self, name, default=''):
         self.loadJson()
-        if name in self.json:
+        if name in self.json and self.json[name] is not None:
             return self.json[name]
         return default
 
@@ -281,7 +281,7 @@ class IllustrationView(AbstractView):
     def painting(self):
         self.loadJson()
         pbase = PAINTINGS_URL
-        if 'Painting' in self.json and self.json['Painting']:
+        if 'Painting' in self.json and self.json['Painting'] is not None:
             return "%s/Painting/%s.jpg" % (pbase,self.json['Painting'])
         else:
             return ''
@@ -310,7 +310,7 @@ class LocationView(AbstractView):
             if self.json:
                 photo = ''
                 pbase = PAINTINGS_URL
-                if self.json and 'Image' in self.json:
+                if self.json and 'Image' in self.json and self.json['Image'] is not None:
                     photo = "%s/Location/%s.jpg" % (pbase,self.json['Image'])
                 gallery = GalleryView()
                 if not quick:
@@ -347,16 +347,15 @@ class LocationView(AbstractView):
         if self.cannon_image is None:
             self.loadJson()
             pbase = PAINTINGS_URL
-            if 'Image' in self.json:
-                self.cannon_image = "%s/Location/%s.jpg" % (pbase,)
+            self.cannon_image = ''
+            if 'Image' in self.json and self.json['Image'] is not None:
+                self.cannon_image = "%s/Location/%s.jpg" % (pbase,self.json['Image'])
                 return self.cannon_image
             for manuscript in self.model.manuscript_set.all():
                 ms = ManuscriptView(self.request, model=manuscript).gallery('AccessionNumber')
-                if not ms['image']:
-                    continue
-                self.cannon_image = ms['image']
-                return self.cannon_image
-            self.cannon_image = ''
+                if 'image' in ms and ms['image'] is not None:
+                    self.cannon_image = ms['image']
+                    return self.cannon_image
         return self.cannon_image
 
 
@@ -397,12 +396,12 @@ class ManuscriptView(AbstractView):
             self.loadJson()
             self.canon_image = ''
             for type in ('Colophon','SamplePage'):
-                if type in self.json:
+                if type in self.json and self.json[type] is not None:
                     self.canon_image = self._image_url(type)
                     return self.canon_image
             for illustration in self.model.illustration_set.all():
                 p = IllustrationView(self.request, model=illustration).painting()
-                if p:
+                if p is not None:
                     self.canon_image = p
                     break
         return self.canon_image
@@ -426,9 +425,9 @@ class ManuscriptView(AbstractView):
                 locationView = LocationView(self.request, self.model.location)
                 loc = { 'Country': '', 'country': '' }
                 if not quick:
-                    if 'Colophon' in self.json:
+                    if 'Colophon' in self.json  and self.json['Colophon'] is not None:
                         gallery.galleryData.append(GalleryView.entry(self._image_url(self.request, self.json, 'Colophon'), '#', 'Colophon', self.json['ColophonNumber'], '', ''))
-                    if 'SamplePage' in self.json:
+                    if 'SamplePage' in self.json and self.json['SamplePage'] is not None:
                         gallery.galleryData.append(GalleryView.entry(self._image_url(self.request, self.json, 'SamplePage'), '#', 'Sample page from this manuscript', '', '', ''))
                     gallery.extend([ IllustrationView(self.request, model=x) for x in self.model.illustration_set.all()])
                     loc = locationView.summary(True)
@@ -519,7 +518,7 @@ class SceneView(AbstractView):
         if self.canon_image is None:
             self.loadJson()
             for type in ('Colophon','SamplePage'):
-                if type in self.json:
+                if type in self.json and self.json[type] is not None:
                     return self._image_url(type)
             self.canon_image= ''
             for illustration in self.model.illustration_set.all():
