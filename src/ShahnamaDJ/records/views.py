@@ -11,6 +11,8 @@ from ShahnamaDJ.views import recordutils
 from ShahnamaDJ.views.recordutils import format_date, wash_notes
 from ShahnamaDJ.views.stringbuilder import StringPattern
 from ShahnamaDJ.settings import PAINTINGS_URL, SERVER_ROOT_URL
+from django.template.context import RequestContext
+import json
 
 
 state_tmpl = StringPattern('ms-state.stb')
@@ -61,6 +63,7 @@ class AbstractView(object):
         self.request = request
         if model is not None:
             self.model = model
+            self.id = model.id
         elif id is not None:
             self.id = id
             
@@ -69,7 +72,8 @@ class AbstractView(object):
             
     def loadJson(self):
         if self.json is None:
-            self.loadModel()
+            if self.model is None:
+                self.loadModel()
             self.json = JsonModel.safe_to_json(self.model)
             
     def makeJsonSafe(self):
@@ -78,9 +82,12 @@ class AbstractView(object):
 
     def buildContext(self, data):
         x = data
+        if 'debug' in self.request.REQUEST:
+            x.update({'debug' : 1})
         return x
     
     def getSafeProperty(self, name, default=''):
+        self.loadJson()
         if name in self.json:
             return self.json[name]
         return default
@@ -94,7 +101,8 @@ re_code = re.compile(r"(-?[0-9]+)(.*)")
 class ChapterView(AbstractView):
     
     def loadModel(self):
-        return Chapter.objects.get(id=self.id)
+        if self.model is None:
+            return Chapter.objects.get(id=self.id)
 
             
     def render(self):
@@ -176,8 +184,6 @@ class CountryView(AbstractView):
 class AuthorityView(AbstractView):
     
     name = None
-    id = None
-    model = None
     
     def __init__(self, request, name, id):
         self.name = name
@@ -202,7 +208,7 @@ class IllustrationView(AbstractView):
     def render(self):
         return render_to_response("illustration.djt.html", self.buildContext(self.summary()))
     
-    def loadObject(self):
+    def loadModel(self):
         if self.model is None:
             self.model = Illustration.objects.get(id = self.id)
             
@@ -225,19 +231,19 @@ class IllustrationView(AbstractView):
                     'painting_url': self.painting(),
                     'url': "%s/illustration/%s" % (SERVER_ROOT_URL,self.id),
                     'form': form_tmpl.apply(self.request,self.json),
-                    'work': AuthorityView('ms-title', self.json['TitleSerial']).json(),
+                    'work': AuthorityView('ms-title', self.getSafeProperty('TitleSerial')).json(),
                     'chapter': chapter.json(),
-                    'chapter-k': AuthorityView('chapter-k', self.json['ChapterSerialK']).json(),
-                    'chapter-b': AuthorityView('chapter-b', self.json['ChapterSerialB']).json(),
-                    'chapter-ds': AuthorityView('chapter-ds', self.json['ChapterSerialDS']).json(),
-                    'date': "%s (%s)" % (Hijri.date(self.json['HijriDate']),Gregorian.date(self.json['GregorianDate'])),
-                    'status': AuthorityView('record-status', self.json['CompletionStatus']).json(),
-                    'up_date': recordutils.format_date(self.json['DateUpdated']),
+                    'chapter-k': AuthorityView('chapter-k', self.getSafeProperty('ChapterSerialK')).json(),
+                    'chapter-b': AuthorityView('chapter-b', self.getSafeProperty('ChapterSerialB')).json(),
+                    'chapter-ds': AuthorityView('chapter-ds', self.getSafeProperty('ChapterSerialDS')).json(),
+                    'date': "%s (%s)" % (Hijri.date(self.getSafeProperty('HijriDate')),Gregorian.date(self.getSafeProperty('GregorianDate'))),
+                    'status': AuthorityView('record-status', self.getSafeProperty('CompletionStatus')).json(),
+                    'up_date': recordutils.format_date(self.getSafeProperty('DateUpdated')),
                     'painter': painter_tmpl.apply(self.request,self.json),
                     'references': ReferenceView.refs_tmpl(self.request,self.json,refmap),
-                    'notes': recordutils.wash_notes(self.json['NotesVisible']),
+                    'notes': recordutils.wash_notes(self.getSafeProperty('NotesVisible')),
                     'folio': folio_tmpl.apply(self.request,self.json),
-                    'format': AuthorityView('ill-format', self.json['FormatSerial']).json(),
+                    'format': AuthorityView('ill-format', self.getSafeProperty('FormatSerial')).json(),
                     'prev-url': "%s/illustration/%s" % (SERVER_ROOT_URL,self.json['chain-prev-folios-in-ms']) if self.json['chain-prev-folios-in-ms'] else '',
                     'next-url': "%s/illustration/%s" % (SERVER_ROOT_URL,self.json['chain-next-folios-in-ms']) if self.json['chain-next-folios-in-ms'] else '',
                 }
@@ -263,7 +269,7 @@ class IllustrationView(AbstractView):
     
     def gallery(self,key=None):
         self.loadJson()
-        return GalleryView.entry(self.getSafeProperty('painting_url'),
+        return GalleryView.entry(self.painting(),
                                  self.getSafeProperty('url'),
                                  self.getSafeProperty('TitleEnglish'),
                                  self.getSafeProperty('FolioNumber'),
@@ -291,7 +297,7 @@ class LocationView(AbstractView):
     def render(self):
         return render_to_response("location.djt.html", self.buildContext(self.summary()))
     
-    def loadObject(self):
+    def loadModel(self):
         if self.model is None:
             self.model = Location.objects.get(id = self.id)
 
@@ -304,19 +310,19 @@ class LocationView(AbstractView):
             if self.json:
                 photo = ''
                 pbase = PAINTINGS_URL
-                if self.json and self.json['Image']:
+                if self.json and 'Image' in self.json:
                     photo = "%s/Location/%s.jpg" % (pbase,self.json['Image'])
                 gallery = GalleryView()
                 if not quick:
-                    gallery.galleryData = [GalleryView.entry(photo,'#',self.json['FullLocationName'],'View of location, go forward for manuscripts','','',True)]
+                    gallery.galleryData = [GalleryView.entry(photo,'#',self.getSafeProperty('FullLocationName'),'View of location, go forward for manuscripts','','',True)]
                     gallery.galleryData.extend([ ManuscriptView(self.request, x) for x in self.model.manuscripts])
                 extra = {
-                     'country': AuthorityView('country', self.json['Country']).json(),
+                     'country': AuthorityView('country', self.getSafeProperty('Country')).json(),
                      'gallery': gallery.emit(),
-                     'up_date': format_date(self.json['DateUpdated']),
+                     'up_date': format_date(self.getSafeProperty('DateUpdated')),
                      'contact': contact_tmpl.apply(self.request,self.locationJson),
                      'address': address_tmpl.apply(self.request,self.flocationJson),
-                     'notes': wash_notes(self.json['NotesVisible']),
+                     'notes': wash_notes(self.getSafeProperty('NotesVisible')),
                 }
                 self.summaryMap = dict(self.json().items() + extra.items())
             else:
@@ -325,24 +331,24 @@ class LocationView(AbstractView):
     
     def text(self):
         self.loadJson()
-        return "%s, %s" % (self.json['FullLocationName'],self.json['City'])
+        return "%s, %s" % (self.getSafeProperty('FullLocationName'),self.getSafeProperty('City'))
     
     def gallery(self, key=None):
         self.loadJson()
         return GalleryView.entry(self._canon_image(),
                             "%s/location/%s" % (SERVER_ROOT_URL,self.model.id),
-                            "%s, %s" % (self.json['FullLocationName'], self.json['City']),
+                            "%s, %s" % (self.getSafeProperty('FullLocationName'), self.getSafeProperty('City')),
                             '',
                             '',
-                            self.json[key])
+                            self.getSafeProperty(key))
         
         
     def _canon_image(self):
         if self.cannon_image is None:
             self.loadJson()
             pbase = PAINTINGS_URL
-            if self.json['Image']:
-                self.cannon_image = "%s/Location/%s.jpg" % (pbase,self.json['Image'])
+            if 'Image' in self.json:
+                self.cannon_image = "%s/Location/%s.jpg" % (pbase,)
                 return self.cannon_image
             for manuscript in self.model.manuscript_set.all():
                 ms = ManuscriptView(self.request, model=manuscript).gallery('AccessionNumber')
@@ -362,7 +368,7 @@ class ManuscriptView(AbstractView):
     def render(self):
         return render_to_response("manuscript.djt.html", self.buildContext(self.summary()))
     
-    def loadObject(self):
+    def loadModel(self):
         if self.model is None:
             self.model = Manuscript.objects.get(id = self.id)
 
@@ -371,7 +377,7 @@ class ManuscriptView(AbstractView):
     def _image_url(self, type):
         self.loadJson()
         pbase = PAINTINGS_URL
-        return "%s/%s/%s.jpg" % (pbase, type, self.json[type])
+        return "%s/%s/%s.jpg" % (pbase, type, self.getSafeProperty(type))
     
     def _size_expr(self, pw, ph, tw, th):
         out = []
@@ -391,7 +397,7 @@ class ManuscriptView(AbstractView):
             self.loadJson()
             self.canon_image = ''
             for type in ('Colophon','SamplePage'):
-                if self.json[type]:
+                if type in self.json:
                     self.canon_image = self._image_url(type)
                     return self.canon_image
             for illustration in self.model.illustration_set.all():
@@ -420,27 +426,27 @@ class ManuscriptView(AbstractView):
                 locationView = LocationView(self.request, self.model.location)
                 loc = { 'Country': '', 'country': '' }
                 if not quick:
-                    if self.json['Colophon']:
+                    if 'Colophon' in self.json:
                         gallery.galleryData.append(GalleryView.entry(self._image_url(self.request, self.json, 'Colophon'), '#', 'Colophon', self.json['ColophonNumber'], '', ''))
-                    if self.json['SamplePage']:
+                    if 'SamplePage' in self.json:
                         gallery.galleryData.append(GalleryView.entry(self._image_url(self.request, self.json, 'SamplePage'), '#', 'Sample page from this manuscript', '', '', ''))
                     gallery.extend([ IllustrationView(self.request, model=x) for x in self.model.illustration_set.all()])
                     loc = locationView.summary(True)
                 extra = {
                     'gallery': gallery.emit(),
-                    'size': self._size_expr(self.json['PageWidth'], self.json['PageLength'], self.json['TextWidth'], self.json['TextLength']),
+                    'size': self._size_expr(self.getSafeProperty('PageWidth'), self.getSafeProperty('PageLength'), self.getSafeProperty('TextWidth'), self.getSafeProperty('TextLength')),
                     'text': text_tmpl.apply(self.request, self.json),
                     'pages': pages_tmpl.apply(self.request, self.json),
                     'state': state_tmpl.apply(self.request, self.json),
                     'origin': origin_tmpl.apply(self.frequest, self.json),
-                    'date': "%s (%s)" % (Hijri.date(self.json['HijriDate']), Gregorian.date(self.json['GregorianDate'])),
+                    'date': "%s (%s)" % (Hijri.date(self.getSafeProperty('HijriDate')), Gregorian.date(self.getSafeProperty('GregorianDate'))),
                     'references': ReferenceView.refs_tmpl(self.request, self.json, refmap),
-                    'notes': wash_notes(self.json['NotesVisible']),
-                    'status': JsonModel.safe_to_json(Authority.objects.get(name='record-status', id=self.json['CompletionStatus'])),
-                    'up_date': format_date(self.json['DateUpdated']),
+                    'notes': wash_notes(self.getSafeProperty('NotesVisible')),
+                    'status': JsonModel.safe_to_json(Authority.objects.get(name='record-status', id=self.getSafeProperty('CompletionStatus'))),
+                    'up_date': format_date(self.getSafeProperty('DateUpdated')),
                     'canon-image': self._canon_image(self.request, self.json),
                     'location_text': locationView.text(),
-                    'location_url': '%s/location/%s' % (SERVER_ROOT_URL, self.json['LocationSerial']),
+                    'location_url': '%s/location/%s' % (SERVER_ROOT_URL, self.getSafeProperty('LocationSerial')),
                     'country': loc['country'],
                     'country_url': '%s/country/%s' % (SERVER_ROOT_URL, loc['Country']),
                     'prev-url': "%s/manuscript/%s" % (SERVER_ROOT_URL, self.json['chain-prev-date']) if self.json['chain-prev-date'] else '',
@@ -455,12 +461,12 @@ class ManuscriptView(AbstractView):
         self.loadJson()
         return GalleryView.entry(self._canon_image(),
                                  "%s/manuscript/%s" % (SERVER_ROOT_URL,self.model.id),
-                                 self.json['AccessionNumber'],'',self._text(),self.json[key])
+                                 self.getSafeProperty('AccessionNumber'),'',self._text(),self.getSafeProperty(key))
     
     def _text(self):
         self.loadJson()
         loc = LocationView(self.request, model=self.model.location).text()
-        return "%s, %s" % (self.json['AccessionNumber'],loc)
+        return "%s, %s" % (self.getSafeProperty('AccessionNumber'),loc)
 
         
         
@@ -473,14 +479,14 @@ class SceneView(AbstractView):
     def render(self):
         return render_to_response("scene.djt.html", self.buildContext(self.summary()))
     
-    def loadObject(self):
+    def loadModel(self):
         if self.model is None:
             self.model = Scene.objects.get(id = self.id)
     
     def summary(self, quick = False):
         if self.summaryMap is None:
             self.loadJson()
-            if self.json:
+            if self.json is not None:
                 refmap = {
                     'GeneralRef1': 'General',
                     'GeneralRef2': 'General',
@@ -488,19 +494,20 @@ class SceneView(AbstractView):
                 }
                 gallery = GalleryView()
                 if not quick:
-                    gallery.galleryData = [ IllustrationView(self.request, model = x) for x in self.model.illustration.all()]
-                chapter = ChapterView(self.request, self.mode.chapter)
+                    gallery.galleryData = [ IllustrationView(self.request, model = x).gallery() for x in self.model.illustration_set.all()]
+                chapter = ChapterView(self.request, model=self.model.chapter)
                 extra = {
                     'gallery': gallery.emit(),
-                    'up_date': format_date(self.json['DateUpdated']),
+                    'up_date': format_date(self.getSafeProperty('DateUpdated')),
                     'references': ReferenceView.refs_tmpl(self.request,self.json,refmap),
-                    'notes': wash_notes(self.json['NotesVisible']),
-                    'chapter_name': chapter.json()['ChapterName'],
-                    'chapter_url': "%s/chapter/%s" % (SERVER_ROOT_URL,chapter.json()['ChapterSerial'])
+                    'notes': wash_notes(self.getSafeProperty('NotesVisible')),
+                    'chapter_name': chapter.getSafeProperty('ChapterName'),
+                    'chapter_url': "%s/chapter/%s" % (SERVER_ROOT_URL,chapter.getSafeProperty('ChapterSerial'))
                 }
                 self.summaryMap = dict(self.json.items() + extra.items())
+                self.summaryMap.update({ 'record' : self.json})
             else:
-                self.summaryMap = {}
+                self.summaryMap = {'summary' : 'isempty', 'view' : self.model, 'id': self.id}
         return self.summaryMap;
     
     def gallery(self, key=None):
@@ -524,7 +531,8 @@ class SceneView(AbstractView):
 
 
 class ReferenceView(AbstractView):
-    def loadObject(self):
+    
+    def loadModel(self):
         if self.model is None:
             self.model = Reference.objects.get(id = self.id)
 
