@@ -40,7 +40,8 @@ class AbstractContentView(object):
 
     def buildContext(self, data):
         x = data
-        print x
+        if 'debug' in self.request.REQUEST:
+            x.update({'debug' : 1})
         return x
 
     class Meta:

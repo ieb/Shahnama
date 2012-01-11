@@ -24,7 +24,7 @@
               {% endfor %}
             </ul>
             <div id="new-event">
-              <a href="{{ server.page_create }}">new news/event ...</a>
+              <a href="?n=1">new news/event ...</a>
             </div>
         </div>      
   </div>
@@ -51,15 +51,15 @@
 
 
 {% block main %}  
-  
   <div>
-
-	<div id="frame-main">
-	<div id="frame-content-article">
-	    {{ page.text|safe}}
+    {% if page.image %}
+    <div id="front-float"><img src="{{ page.image }}" width="320" style="border: 4px solid black;"/></div>
+    {% endif %}
+    <h1>{{ page.title }}</h1>
+    <div>
+       {{ page.text|safe }}
     </div>
-    </div>
-
+    <a href="?e=1">edit</a>
   </div>
-  
 {% endblock %}
+
