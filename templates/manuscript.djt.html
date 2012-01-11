@@ -69,59 +69,59 @@
 	  <div id="frame-main-right">
 	    <div id="manuscript-jumper">
             mss:
-            {% if data.prev_url %} 
+            {% if prev_url %} 
             <span title=".ui-icon-seek-next" class="grey-box ui-corner-all inline-block">
-              <a class="icon-prev" href="{{ data.prev_url }}" href="#"/>
+              <a class="icon-prev" href="{{ prev_url }}" href="#"/>
             </span>
             {% endif %} 
-            {% if data.next_url %} 
+            {% if next_url %} 
             <span title=".ui-icon-seek-next" class="grey-box ui-corner-all inline-block">
-              <a class="icon-next" href="{{ data.next_url }}" href="#"/>
+              <a class="icon-next" href="{{ next_url }}" href="#"/>
             </span>
             {% endif %} 
 	    </div>
-	    <div id="manuscript-block"><b>{{ data.AccessionNumber }}{# Ryl Pers 910 #}</b>,
-			    <a href="{{ data.location_url }}" href="#">{{ data.location_text }}{# Manchester, John Rylands University Library of Manchester #}</a>,
-			    <a href="{{ data.country_url }}" >{{ data.location_text }}{# UK #}</a>.
+	    <div id="manuscript-block"><b>{{ AccessionNumber }}{# Ryl Pers 910 #}</b>,
+			    <a href="{{ location_url }}" href="#">{{ location_text }}{# Manchester, John Rylands University Library of Manchester #}</a>,
+			    <a href="{{ country_url }}" >{{ location_text }}{# UK #}</a>.
 	    </div>
 	    <div id="manuscript-details">
 	      <div class="manuscript-details-list">
 	        <dl id="manuscript-details-body-main">
 	          <dt>Date</dt>
-	          <dd>{{ data.date }}{# 26 May 1518 (6 Jumada I 924) #}</dd>
-              {% if data.origin %}
+	          <dd>{{ date }}{# 26 May 1518 (6 Jumada I 924) #}</dd>
+              {% if origin %}
 	          <dt>Origin</dt>
-	          <dd>{{ data.origin }}{# Tabriz #}</dd>
+	          <dd>{{ origin }}{# Tabriz #}</dd>
 	          {% endif %}
 	          <dt>Size (h x w)</dt>
-	          <dd>{{ data.size }}{# page 311 x 228 mm, text 228 x 152 mm #}</dd>
+	          <dd>{{ size }}{# page 311 x 228 mm, text 228 x 152 mm #}</dd>
 	          <dt>Text</dt>
-	          <dd>{{ data.text }}{# 6 columns, 20 rows, Poor Nasta'liq #}</dd>
-              {% if data.state %}
+	          <dd>{{ text }}{# 6 columns, 20 rows, Poor Nasta'liq #}</dd>
+              {% if state %}
 	          <dt>Type and State</dt>
-	          <dd>{{ data.state }}{#Codex, complete, 564 extant folios, 3 illuminations, 101 illustrations of The Shahnama #}</dd>
+	          <dd>{{ state }}{#Codex, complete, 564 extant folios, 3 illuminations, 101 illustrations of The Shahnama #}</dd>
               {% endif %}
-              {% if data.pages %}
+              {% if pages %}
 	          <dt>Pages</dt>
-	          <dd>{{ data.pages }}{# Colophon on 562r, Sample Page on 319r #}</dd>
+	          <dd>{{ pages }}{# Colophon on 562r, Sample Page on 319r #}</dd>
               {% endif %}
-              {% if data.Ownership %}
+              {% if Ownership %}
 	          <dt>Ownership</dt>
-	          <dd>{{ data.Ownership }}{# British Library #}</dd>
+	          <dd>{{ Ownership }}{# British Library #}</dd>
               {% endif %}
 	        </dl>
-	        <div id="manuscript-details-body-notes">{{ data.notes }}{#
+	        <div id="manuscript-details-body-notes">{{ notes }}{#
 	          <p>
 	                  Eighteenth-century Indian binding of claret-coloured leather with white medallions, pendants, corner pieces and border panels inlaid and embossed. Doublures with medallions and pendants painted in silver. Modern slip-case of scarlet morocco.
 			  </p>
 			  #}
 	        </div>
 	        <div id="manuscript-details-references">
-              {% if data.references %}
+              {% if references %}
 	          <h3 class="notes">References</h3>
 	          <div class="manuscript-details-list">
 	            <dl id="manuscript-details-body-meta">
-                  {% for ref in data.references %}
+                  {% for ref in references %}
                     {% if ref.key %}
 	                <dt>{{ ref.key }}{# General #}</dt>
 	                <dd>{{ ref.value }}{# Norgren, J. &amp; Davis, E. Preliminary index of Shah-nameh illustrations. University of Michigan. Ann Arbor. USA #}</dd>
@@ -134,11 +134,11 @@
 	            <dl id="manuscript-details-body-meta">
 	              <dt>This Record</dt>
 	              <dd>
-					{{ data.status }}{# Ready #} Last update by {{ data.DatabaseUser }}{# admin #} on {{ data.up_date }}{# 24-12-2011 #}
+					{{ status }}{# Ready #} Last update by {{ DatabaseUser }}{# admin #} on {{ up_date }}{# 24-12-2011 #}
 	              </dd>
 	              <dt>Copyright</dt>
 	              <dd>
-	              	{{ data.CopyrightDetails }}{# University of Cambridge #}
+	              	{{ CopyrightDetails }}{# University of Cambridge #}
 				  </dd>
 	            </dl>
 	          </div>

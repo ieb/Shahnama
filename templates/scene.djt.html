@@ -69,18 +69,18 @@
 	      </span>
 	    </div>
 	    <div id="manuscript-block">
-	    	<b>{{ data.EnglishTitle }}{# Iskandar comforting the dying Dara #}</b> <b>{{ data.PersianTitle }}{# Iskandar comforting the dying Dara #}</b>.
+	    	<b>{{ EnglishTitle }}{# Iskandar comforting the dying Dara #}</b> <b>{{ PersianTitle }}{# Iskandar comforting the dying Dara #}</b>.
 		</div>
 	    <div id="manuscript-details">
 	      <div class="manuscript-details-list">
 	        <dl id="manuscript-details-body-main">
 	          <dt>Within chapter</dt>
 	          <dd>
-	          	<a href="{{ data.chapter_url }}" >{{ data.chapter_name }}{# 26 May 1518 (6 Jumada I 924) #}
+	          	<a href="{{ chapter_url }}" >{{ chapter_name }}{# 26 May 1518 (6 Jumada I 924) #}
 	          	</a>
 	          </dd>
 	        </dl>
-              <div id="manuscript-details-body-notes" >{{ data.notes }}{#
+              <div id="manuscript-details-body-notes" >{{ notes }}{#
                 <p>
 					Rustam goes into the steppe to choose himself a horse. After observing and rejecting several others he captures a wild colt, Rakhsh.
 				</p>
@@ -107,35 +107,35 @@
 	              <tbody>
 	                <tr class="even">
 	                  <th>Volume</th>
-	                  <td>{{ data.MohlVolume }}{# Dara son of Darab (14 years) #}</td>
-	                  <td>{{ data.BertelsVolume }}{# Dara son of Darab (453) #}</td>
-	                  <td>{{ data.KVolume }}{# Dara son of Darab (459) #}</td>
-	                  <td>{{ data.MTVolume }}{# Dara son of Darab (1485) #}</td>
-	                  <td>{{ data.WarnerVolume }}{# Dara son of Darab (1485) #}</td>
+	                  <td>{{ MohlVolume }}{# Dara son of Darab (14 years) #}</td>
+	                  <td>{{ BertelsVolume }}{# Dara son of Darab (453) #}</td>
+	                  <td>{{ KVolume }}{# Dara son of Darab (459) #}</td>
+	                  <td>{{ MTVolume }}{# Dara son of Darab (1485) #}</td>
+	                  <td>{{ WarnerVolume }}{# Dara son of Darab (1485) #}</td>
 	                </tr>
 	                <tr>
 	                  <th>Page</th>
-	                  <td>{{ data.MohlPage }}{# 318 #}</td>
-	                  <td>{{ data.BertelsPage }}{# 313 #}</td>
-	                  <td>{{ data.KPage }}{# &#160; #}</td>
-	                  <td>{{ data.MTPage }}{# &#160; #}</td>
-	                  <td>{{ data.WarnerPage }}{# &#160; #}</td>
+	                  <td>{{ MohlPage }}{# 318 #}</td>
+	                  <td>{{ BertelsPage }}{# 313 #}</td>
+	                  <td>{{ KPage }}{# &#160; #}</td>
+	                  <td>{{ MTPage }}{# &#160; #}</td>
+	                  <td>{{ WarnerPage }}{# &#160; #}</td>
 	                </tr>
 	                <tr class="even">
 	                  <th>Verse Start</th>
-	                  <td>{{ data.MohlStart }}{# 333 #}</td>
-	                  <td>{{ data.BertelsStart }}{# 328 #}</td>
-	                  <td>{{ data.KStart }}{# &#160; #}</td>
-	                  <td>{{ data.MTStart }}{# &#160; #}</td>
-	                  <td>{{ data.WarnerStart }}{# &#160; #}</td>
+	                  <td>{{ MohlStart }}{# 333 #}</td>
+	                  <td>{{ BertelsStart }}{# 328 #}</td>
+	                  <td>{{ KStart }}{# &#160; #}</td>
+	                  <td>{{ MTStart }}{# &#160; #}</td>
+	                  <td>{{ WarnerStart }}{# &#160; #}</td>
 	                </tr>
 	                <tr>
 	                  <th>Verse End</th>
-	                  <td>{{ data.MohlEnd }}{# &#160; #}</td>
-	                  <td>{{ data.BertelsEnd }}{# &#160; #}</td>
-	                  <td>{{ data.KEnd }}{# &#160; #}</td>
-	                  <td>{{ data.MTEnd }}{# &#160; #}</td>
-	                  <td>{{ data.WarnerEnd }}{# &#160; #}</td>
+	                  <td>{{ MohlEnd }}{# &#160; #}</td>
+	                  <td>{{ BertelsEnd }}{# &#160; #}</td>
+	                  <td>{{ KEnd }}{# &#160; #}</td>
+	                  <td>{{ MTEnd }}{# &#160; #}</td>
+	                  <td>{{ WarnerEnd }}{# &#160; #}</td>
 	                </tr>
 	              </tbody>
 	            </table>
@@ -143,11 +143,11 @@
 
 
 	        <div id="manuscript-details-references">
-	          {% if data.references %}
+	          {% if references %}
 	          <h3 class="notes">References</h3>
 	          <div class="manuscript-details-list">
 	            <dl id="manuscript-details-body-meta">
-	              {% for ref in data.references %}
+	              {% for ref in references %}
 	                {% if ref.key %}
 	                <dt>{{ ref.key }}{# General #}</dt>
 	                <dd>{{ ref.value }}{# Norgren, J. &amp; Davis, E. Preliminary index of Shah-nameh illustrations. University of Michigan. Ann Arbor. USA #}</dd>
@@ -160,7 +160,7 @@
 	            <dl id="manuscript-details-body-meta">
 	              <dt>This Record</dt>
 	              <dd>
-	              	Last update by  {{ data.DatabaseUser }} on {{ data.up_date }}
+	              	Last update by  {{ DatabaseUser }} on {{ up_date }}
 	              </dd>
 	            </dl>
 	          </div>

@@ -21,8 +21,8 @@
 	</div>
         <div id="frame-main-left">
           <div id="main-ill">
-            {% if data.painting_url %}
-            <img  src="{{ data.painting_url }}"/>
+            {% if painting_url %}
+            <img  src="{{ painting_url }}"/>
             {% else %}
             <img  src="{{ assets }}/none.png"/>
             {% endif %}
@@ -31,59 +31,59 @@
         <div id="frame-main-right">
           <div id="manuscript-jumper">
             ms page: 
-            {% if data.prev_url %}
+            {% if prev_url %}
              <span title=".ui-icon-seek-next"  class="grey-box ui-corner-all inline-block">
-              <a class="icon-prev" href="{{ data.prev_url }}" />
+              <a class="icon-prev" href="{{ prev_url }}" />
             </span>
             {% endif %}
-            {% if data.next_url %}
+            {% if next_url %}
             <span title=".ui-icon-seek-next" class="grey-box ui-corner-all inline-block">
-              <a class="icon-next" href="{{ data.next_url }}" />
+              <a class="icon-next" href="{{ next_url }}" />
             </span>
             {% endif %}
           </div>
           <div id="manuscript-block">
-		    <span>{{ data.FolioNumber }}</span>, <b>{{ data.TitleEnglish }}</b> <b>{{ data.TitlePersian }}</b>.
+		    <span>{{ FolioNumber }}</span>, <b>{{ TitleEnglish }}</b> <b>{{ TitlePersian }}</b>.
 		  </div>
           <div id="manuscript-details">
             <div class="manuscript-details-list">
               <dl id="super-manuscript-details-body-main">
                 <dt>Within</dt>
                 <dd>
-                	<a href="{{ data.ms_url }}" >{{ data.ms_name }}</a> in 
-                	<a href="{{ data.loc_url }}">{{ data.loc_name }}</a>,
-                	<span>{{ data.loc_city }}</span>,
-                	<a href="{{ data.cou_url }}" >{{ data.cou_name }}</a>
+                	<a href="{{ ms_url }}" >{{ ms_name }}</a> in 
+                	<a href="{{ loc_url }}">{{ loc_name }}</a>,
+                	<span>{{ loc_city }}</span>,
+                	<a href="{{ cou_url }}" >{{ cou_name }}</a>
                 </dd>
                 <dt>Depicts</dt>
                 <dd>
-                	<a href="{{ data.sc_url }}">{{ data.sc_name }}</a>, in 
-                	<a href="{{ data.ch_url }}">{{ data.ch_name }}</a>
+                	<a href="{{ sc_url }}">{{ sc_name }}</a>, in 
+                	<a href="{{ ch_url }}">{{ ch_name }}</a>
                 </dd>
               </dl>
               <dl id="manuscript-details-body-main">
-                {% if data.work %}
+                {% if work %}
                 <dt>Work</dt>
-                <dd>{{ data.work }}</dd>
+                <dd>{{ work }}</dd>
                 {% endif %}
-                {% if data.date %}
+                {% if date %}
                 <dt>Date</dt>
-                <dd>{{ data.date }}{# Rajab 1131 (June 1719). (Gregorian date derived from Hijri) #}</dd>
+                <dd>{{ date }}{# Rajab 1131 (June 1719). (Gregorian date derived from Hijri) #}</dd>
                 {% endif %}
-                {% if data.form %}
+                {% if form %}
                 <dt>Form</dt>
-                <dd>{{ data.form }}{# 160 x 170 #}</dd>
+                <dd>{{ form }}{# 160 x 170 #}</dd>
                 {% endif %}
-                {% if data.folio %}
+                {% if folio %}
                 <dt>Folio</dt>
-                <dd>{{ data.folio }}{# 42 #}</dd>
+                <dd>{{ folio }}{# 42 #}</dd>
                 {% endif %}
-                {% if data.painter %}
+                {% if painter %}
                 <dt>Painter</dt>
-                <dd>{{ data.painter }}{# Indian, Punjab #}</dd>
+                <dd>{{ painter }}{# Indian, Punjab #}</dd>
                 {% endif %}
               </dl>
-              <div id="manuscript-details-body-notes" >{{ data.notes }}{#
+              <div id="manuscript-details-body-notes" >{{ notes }}{#
                 <p>
 					Rustam goes into the steppe to choose himself a horse. After observing and rejecting several others he captures a wild colt, Rakhsh.
 				</p>
@@ -104,48 +104,48 @@
                   <tbody>
                     <tr class="even">
                       <th>Chapter</th>
-                      <td>{{ data.chapter.ChapterName }}{# Dara son of Darab (14 years) #}</td>
-                      <td>{{ data.chapter_b }}{# Dara son of Darab (453) #}</td>
-                      <td>{{ data.chapter_k }}{# Dara son of Darab (459) #}</td>
-                      <td>{{ data.chapter_ds }}{# Dara son of Darab (1485) #}</td>
+                      <td>{{ chapter.ChapterName }}{# Dara son of Darab (14 years) #}</td>
+                      <td>{{ chapter_b }}{# Dara son of Darab (453) #}</td>
+                      <td>{{ chapter_k }}{# Dara son of Darab (459) #}</td>
+                      <td>{{ chapter_ds }}{# Dara son of Darab (1485) #}</td>
                     </tr>
                     <tr>
                       <th>First Line</th>
-                      <td>{{ data.FirstLineM }}{# 318 #}</td>
-                      <td>{{ data.FirstLineB }}{# 313 #}</td>
-                      <td>{{ data.FirstLineK }}{# &#160; #}</td>
-                      <td>{{ data.FirstLineDS }}{# &#160; #}</td>
+                      <td>{{ FirstLineM }}{# 318 #}</td>
+                      <td>{{ FirstLineB }}{# 313 #}</td>
+                      <td>{{ FirstLineK }}{# &#160; #}</td>
+                      <td>{{ FirstLineDS }}{# &#160; #}</td>
                     </tr>
                     <tr class="even">
                       <th>Break Line Before</th>
-                      <td>{{ data.BreakLineMbefore }}{# 333 #}</td>
-                      <td>{{ data.BreakLineBbefore }}{# 328 #}</td>
-                      <td>{{ data.BreakLineKbefore }}{# &#160; #}</td>
-                      <td>{{ data.BreakLineDSbefore }}{# &#160; #}</td>
+                      <td>{{ BreakLineMbefore }}{# 333 #}</td>
+                      <td>{{ BreakLineBbefore }}{# 328 #}</td>
+                      <td>{{ BreakLineKbefore }}{# &#160; #}</td>
+                      <td>{{ BreakLineDSbefore }}{# &#160; #}</td>
                     </tr>
                     <tr>
                       <th>Break Line After</th>
-                      <td>{{ data.BreakLineMafter }}{# &#160; #}</td>
-                      <td>{{ data.BreakLineBafter }}{# &#160; #}</td>
-                      <td>{{ data.BreakLineKafter }}{# &#160; #}</td>
-                      <td>{{ data.BreakLineDSafter }}{# &#160; #}</td>
+                      <td>{{ BreakLineMafter }}{# &#160; #}</td>
+                      <td>{{ BreakLineBafter }}{# &#160; #}</td>
+                      <td>{{ BreakLineKafter }}{# &#160; #}</td>
+                      <td>{{ BreakLineDSafter }}{# &#160; #}</td>
                     </tr>
                     <tr class="even">
                       <th>Last Line</th>
-                      <td>{{ data.LastLineM }}{# 333 #}</td>
-                      <td>{{ data.LastLineB }}{# 328 #}</td>
-                      <td>{{ data.LastLineK }}{# &#160; #}</td>
-                      <td>{{ data.LastLineDS }}{# &#160; #}</td>
+                      <td>{{ LastLineM }}{# 333 #}</td>
+                      <td>{{ LastLineB }}{# 328 #}</td>
+                      <td>{{ LastLineK }}{# &#160; #}</td>
+                      <td>{{ LastLineDS }}{# &#160; #}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <div id="manuscript-details-references">
-                  {% if data.references %}
+                  {% if references %}
 		          <h3 class="notes">References</h3>
 		          <div class="manuscript-details-list">
 		            <dl id="manuscript-details-body-meta">
-		              {% for ref in data.references %}
+		              {% for ref in references %}
 		                {% if ref.key %}
 		                <dt>{{ ref.key }}{# General #}</dt>
 		                <dd>{{ ref.value }}{# Norgren, J. &amp; Davis, E. Preliminary index of Shah-nameh illustrations. University of Michigan. Ann Arbor. USA #}</dd>
@@ -158,15 +158,15 @@
                   <dl id="manuscript-details-body-meta">
                     <dt>This Record</dt>
                     <dd>
-						<span>{{ data.status }}{# Ready #}</span>.
+						<span>{{ status }}{# Ready #}</span>.
 		              	Last update by 
-						<span>{{ data.DatabaseUser }}</span>
+						<span>{{ DatabaseUser }}</span>
 		              	on
-						<span>{{ data.up_date }}</span>
+						<span>{{ up_date }}</span>
                     </dd>
 	                <dt>Copyright</dt>
 	                <dd>
-	              	  <span>{{ data.CopyrightDetails }}<span/>
+	              	  <span>{{ CopyrightDetails }}<span/>
 				    </dd>
                   </dl>
                 </div>

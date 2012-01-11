@@ -74,36 +74,36 @@
 	      </span>
 	    </div>
 	    <div id="manuscript-block">
-	    	<b>{{ data.FullLocationName }}{# Library of Studies #}</b>, <span>{{ data.City }}{#  London #}</span>, <span>{{ data.country }}{# England #}</span>.
+	    	<b>{{ FullLocationName }}{# Library of Studies #}</b>, <span>{{ City }}{#  London #}</span>, <span>{{ country }}{# England #}</span>.
 		</div>
 	    <div id="manuscript-details">
 	      <div class="manuscript-details-list">
 	        <dl id="manuscript-details-body-main">
-	          {% if data.contact %}
+	          {% if contact %}
 	          <dt>Contact</dt>
-	          <dd>{{ data.contact }}{# contact #}</dd>
+	          <dd>{{ contact }}{# contact #}</dd>
 	          {% endif %}
-              {% if data.address %}
+              {% if address %}
 	          <dt>Address</dt>
-	          <dd>{{ data.address }}{# address #}</dd>
+	          <dd>{{ address }}{# address #}</dd>
               {% endif %}
-              {% if data.Website %}
+              {% if Website %}
 	          <dt>Website</dt>
-	          <dd>{{ data.Website }}{# google.com #}</dd>
+	          <dd>{{ Website }}{# google.com #}</dd>
               {% endif %}
 	        </dl>
-              <div id="manuscript-details-body-notes" >{{ data.notes }}{#
+              <div id="manuscript-details-body-notes" >{{ notes }}{#
                 <p>
 					Rustam goes into the steppe to choose himself a horse. After observing and rejecting several others he captures a wild colt, Rakhsh.
 				</p>
 				#}
               </div>
 	        <div id="manuscript-details-references">
-	          {% if data.references %}
+	          {% if references %}
 	          <h3 class="notes">References</h3>
 	          <div class="manuscript-details-list">
 	            <dl id="manuscript-details-body-meta">
-	              {% for ref in data.referneces %}
+	              {% for ref in referneces %}
 	                {% if ref.key %}
 	                <dt>{{ ref.key }}{# General #}</dt>
 	                <dd>{{ ref.value }}{# Norgren, J. &amp; Davis, E. Preliminary index of Shah-nameh illustrations. University of Michigan. Ann Arbor. USA #}</dd>
@@ -117,13 +117,13 @@
 	              <dt>This Record</dt>
 	              <dd>
 	              	Last update by 
-					<span>{{ data.DatabaseUser }}{# admin #}</span>
+					<span>{{ DatabaseUser }}{# admin #}</span>
 	              	on
-					<span>{{ data.up_date }}{# 24-12-2011 #}</span>
+					<span>{{ up_date }}{# 24-12-2011 #}</span>
 	              </dd>
 	                <dt>Copyright</dt>
 	                <dd>
-	              	  <span>{{ data.CopyrightDetails }}{# University of Cambridge #}</span>
+	              	  <span>{{ CopyrightDetails }}{# University of Cambridge #}</span>
 				    </dd>
 	            </dl>
 	          </div>

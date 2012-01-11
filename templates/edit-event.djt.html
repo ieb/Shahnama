@@ -75,10 +75,10 @@
 </script>
 
 
-	  <input type="text" name="title" value="" id="title" value="{{ data.title }}"
+	  <input type="text" name="title" value="" id="title" value="{{ title }}"
   				 style="font-size: 32px; width: 600px"/> <!-- XXX -->
   	<input type="submit" name="update" value="update" value="Save"/>
-    <textarea id="content" name="text" class="tinymce" style="width:100%; height: " >{{ data.text }}</textarea>
+    <textarea id="content" name="text" class="tinymce" style="width:100%; height: " >{{ text }}</textarea>
 
   </div>
 {% endblock %}
@@ -92,14 +92,14 @@
     </div>
 		<div>
 			<p>
-	  	Title: <input type="text" id="short-title" name="short-title" value="" value="{{ data.short_title }}"
+	  	Title: <input type="text" id="short-title" name="short-title" value="" value="{{ short_title }}"
   				 	 style="width: 200px"/> <!-- XXX --> <br/>(max 4 words)
 			</p><p>
-	  	Text: <input type="text" id="short-text" name="short-text" value="" value="{{ data.short_text }}"
+	  	Text: <input type="text" id="short-text" name="short-text" value="" value="{{ short_text }}"
   				   style="width: 200px"/> <!-- XXX --> <br/>(max 12 words)
   		</p>
         <p>
-            About: <input type="text" id="about" name="about" value="" value="{{ data.about }}"
+            About: <input type="text" id="about" name="about" value="" value="{{ about }}"
                      style="width: 200px"/> <!-- XXX --> <br/>(if not blank will appear in "about" section in header under that name)
             
         </p>

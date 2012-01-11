@@ -36,10 +36,10 @@
         <div id="front-left-events">
             <h2>News &amp; Events</h2>
             <ul>
-              {% for value in list %}
+              {% for value in pages %}
                 <li>
                     <h3>
-                        <a href="{{ value.url }}">
+                        <a href="/site/{{ value.id }}">
                             <img src="{{ value.thumbnail }}"  width="96" height="70"/>
                         <span>{{ value.short_title }}</span>
                         </a>
@@ -49,9 +49,30 @@
               {% endfor %}
             </ul>
             <div id="new-event">
-              <a href="#" href="{{ server.page_create }}">new news/event ...</a>
+              <a href="{{ server.page_create }}">new news/event ...</a>
             </div>
         </div>      
   </div>
 {% endblock %}
+
+{% block superleft %}
+         <div id="front-left-nav" >
+            The Collection
+            <h2>The Collection</h2>
+            <ul>
+              <li><a href="/country/">Find by location</a></li>
+              <li><a href="/scene/">Find by scene</a></li>
+              <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/bibliography">Bibliography</a></li>
+              <!--
+              <li><a href="#">Find a Library/Museum</a></li>
+              <li><a href="#">Find a Scene</a></li>
+              <li><a href="#">Search</a></li>
+              <li><a href="#">Use your workbooks</a></li>
+              -->
+            </ul>
+          </div>
+{% endblock %}
+
+          
+          
 

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-
+{% load static %}
+{% get_static_prefix as assets %}
 	
 
 	<!-- page layout -->
@@ -26,7 +27,7 @@
 	  <div id="frame-header">
 	    <a id="title-link" href="{{ server }}/front">home</a>
 		<h1 id="frame-title">
-		  <span>Shahnama Project</span> <!-- span is for special font -->
+		  <span>Shahnama Project</a></span> <!-- span is for special font -->
 		</h1>
 		<h2 id="frame-slogan">
 		  A comprehensive collection of manuscripts of<br/>
@@ -79,37 +80,21 @@
 	  </div>
 
 	  <div id="frame-front">
-	  
 	    {% block beforeform %} {% endblock %}
 	    {% if not post %}
 	    <form method="POST" action="{{ post }}" >
 	    {% endif %}
 	    <div id="front-left">
-	      {% block superleft %}
-	  	  <div id="front-left-nav" >
-	  	    <h2>The Collection</h2>
-	  	    <ul>
-	  	      <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/index/collection/">Find by location</a></li>
-              <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/index/depiction/">Find by scene</a></li>
-              <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/bibliography">Bibliography</a></li>
-	  	      <!--
-	  	      <li><a href="#">Find a Library/Museum</a></li>
-	  	      <li><a href="#">Find a Scene</a></li>
-	  	      <li><a href="#">Search</a></li>
-	  	      <li><a href="#">Use your workbooks</a></li>
-	  	      -->
-	  	    </ul>
-	  	  </div>
-	  	  {% endblock %}
+	      {% block superleft %} {% endblock %}
 	  	  {% block left %} {% endblock %}
-          {% include 'news-col.html' %}
 	  	</div>
 	    <div id="front-main">
 	  	  <div id="front-content">
 	  	  	  <div id="front-border">&#160;</div>
-                {% block main %} {% endblock %}
-	  	        {% include 'thanks.html' %}
+                {% block main %} 
+                {% endblock %}
 	  	        <div class="front-special-clear">&nbsp;</div>
+                <!-- {# include 'thanks.html' #} -->
 	      </div>
 	    </div>
         {% if not post %}
