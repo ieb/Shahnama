@@ -122,7 +122,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
-    'ShahnamaDJ.records'
+    'ShahnamaDJ.records',
+    'ShahnamaDJ.content'
 )
 
 # A sample logging configuration. The only tangible logging
@@ -152,4 +153,5 @@ LOGGING = {
 SOURCE_DATA = '/Users/ieb/Caret/shahnama/sh2/sh2dj/sourcedata'
 PAINTINGS_URL = 'http://www9.caret.cam.ac.uk/images-qa/70/'
 SERVER_ROOT_URL = ""
+
 
