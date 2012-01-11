@@ -2,16 +2,16 @@ from django.db import models
 import json
 # Create your models here.
 '''
-This model is based on the model develed by Dan to translate the relational tables used in the orriginal
+This model is based on the model developed by Dan to translate the relational tables used in the original
 MySQL Shahnama data base into a model that could be stored in Berkley DB, hence it is not fully relational
 and needs some explanation. This is probably best done by looking at the configuration in Migrate.py, copied
 here for completeness.
 
 The structure below defines the translation from the MySQL relational DB into Json files.
 The key is the name of the MySQL table eg 'Illustration', 'MsType', etc.
-'dir' is the file system dir where the record is serialised, and 'serial' is the name of the field that
+'dir' is the file system dir where the record is serialized, and 'serial' is the name of the field that
 represents the ID of the record.
-'fixes' represents a set of fixed to dat which was applied in translating from MySQL to Json.
+'fixes' represents a set of fixed to data which was applied in translating from MySQL to Json.
 'build' builds a link and adds the field names
 'authority' means the record is pushed into a single authority table with a type constant as specified 'ms-type',
    'serial' is the name of the ID field in mysql in the table eg MsType.MsTypeSerial is the ID of the authority
@@ -19,7 +19,7 @@ represents the ID of the record.
    'value' is the name of the mysql field where the authority is contained.
    'order' adds a order field to the json based on the required ordering.
 
-So the authority table forms a dictionary of authority types indexed by type and serial. Unfortunately the serials do clash so they cant
+So the authority table forms a dictionary of authority types indexed by type and serial. Unfortunately the serials do clash so they can't
 be used as a ID. The code would probably benefit from being able to load the entire authority file into memory. That is, I guess, what
 Dan was trying to do with BDB and maps and eliminate the overhead of performing a SQL operation for each lookup. It should be possible
 to tell Django to simply cache the values in the reference table which will have the same effect.
