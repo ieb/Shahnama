@@ -26,9 +26,17 @@
         <div id="frame-main-right">
           <div id="manuscript-details">
             <div class="manuscript-details-list">
-                <form method="POST" action="#" >
+                <form method="POST" action="/admin/loadDb" >
                    {% csrf_token %}
                    <input type="submit" name="submit" value="Load Database" />
+                   <label for="loadDataDb">with Data</label>
+                   <input type="checkbox" name="loadData" id="loadDataDb" value="Y" />
+                </form>
+                <form method="POST" action="/admin/loadEvents" >
+                   {% csrf_token %}
+                   <input type="submit" name="submit" value="Load Events" />
+                   <label for="loadDataEvent">with Data</label>
+                   <input type="checkbox" name="loadData" id="loadDataEvent" value="Y" />
                 </form>
             </div>
           </div>

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+{% load static %}
+{% get_static_prefix as assets %}
 
     
 
@@ -85,31 +87,14 @@
         <form method="POST" action="{{ post }}" >
         {% endif %}
         <div id="front-left">
-          {% block superleft %}
-          <div id="front-left-nav" >
-            <h2>The Collection</h2>
-            <ul>
-              <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/index/collection/">Find by location</a></li>
-              <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/index/depiction/">Find by scene</a></li>
-              <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/bibliography">Bibliography</a></li>
-              <!--
-              <li><a href="#">Find a Library/Museum</a></li>
-              <li><a href="#">Find a Scene</a></li>
-              <li><a href="#">Search</a></li>
-              <li><a href="#">Use your workbooks</a></li>
-              -->
-            </ul>
-          </div>
-          {% endblock %}
+          {% block superleft %} {% endblock %}
           {% block left %} {% endblock %}
-          {% include 'news-col.html' %}
         </div>
         <div id="front-main">
           <div id="front-content">
               <div id="front-border">&#160;</div>
                 {% block mainpre %} {% endblock %}
                 {% block mainpost %} {% endblock %}
-                {% include 'thanks.html' %}
                 <div class="front-special-clear">&nbsp;</div>
           </div>
         </div>
