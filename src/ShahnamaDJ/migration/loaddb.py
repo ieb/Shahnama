@@ -3,14 +3,10 @@ Created on Dec 23, 2011
 This loads data from a tree of Json files into ShahnamaDJ
 @author: ieb
 '''
-import sys
 import os
 import json
-from ShahnamaDJ.settings import SOURCE_DATA, STATIC_URL
-from ShahnamaDJ.records.models import Chapter, Country, Location, Manuscript,\
-    Scene, Illustration, Authority
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
 from django.template.context import RequestContext
@@ -19,27 +15,6 @@ from django.db.backends.sqlite3.base import IntegrityError
 from django.views.decorators.http import condition
 import time
 
-# This the the mapping of folder into Object type for the json data
-# eg SOURCE_DATA/chapter contains json files for Chapter objects
-SOURCE_DATA_TYPES = {
-        'chapter' : Chapter,
-        'country' : Country,
-        'location' : Location,
-        'manuscript' : Manuscript,
-        'scene' : Scene,
-        'illustration' : Illustration,
-        'ms-type' : Authority,
-        'ms-author' : Authority,
-        'ms-status' : Authority,
-        'ms-title' : Authority,
-        'ms-lang' : Authority,
-        'bib-class' : Authority,
-        'record-status' : Authority,
-        'chapter-k' : Authority,
-        'chapter-b' : Authority,
-        'chapter-ds' : Authority,
-        'ill-format' : Authority
-        }
 '''
 This class implements an iterator that iterates through the messages produced by
 the data load operation. When the data load is complete the iterator will raise 
@@ -67,6 +42,8 @@ class DBLoader(object):
         try:
             data = json.load(file("%s/%s" % (path,key)),encoding=encoding)
             dataKey = loader.getKeyFromJson(data)
+            if dataKey is None:
+                dataKey = key
             obj = loader.objects.create(id=dataKey, key=dataKey, data = json.dumps(data))
             obj.save()
             return self._log("Pass 1 %s of %s " % (i,len(self.filesToLoad)),True)
@@ -153,17 +130,18 @@ class DBLoader(object):
         raise StopIteration
 
 
+
 '''
 This is an output generator that gets messages from the load process and streams them
 out to the output stream
 '''
-def renderLoad_generator(context):
+def renderDbLoad_generator(context, loadData, dataSource, dataStructure):
     yield render_to_string("loaddb_pre.djt.html", context )
-    dbloader = DBLoader("loaddb_message.djt.html", SOURCE_DATA, SOURCE_DATA_TYPES, False)
+    dbloader = DBLoader("loaddb_message.djt.html", dataSource, dataStructure, loadData)
     print "loading from DB"
     for message in dbloader:
         yield message
-    yield render_to_string("loaddb_post.djt.html", {"assets": STATIC_URL})
+    yield render_to_string("loaddb_post.djt.html", {})
 
 '''
 The load view which covers both post and get. The no etag condition causes the 
@@ -172,13 +150,15 @@ loadDb fuction to stream, bypassing the Django cache. Also A login is required
 @login_required
 @permission_required('records.loaddb')
 @condition(etag_func=None)
-def loadDb(request):
+def loadDb(request, dataSource, dataStructure):
     if request.method == "POST":
-        c = {"assets" : STATIC_URL}
+        c = {}
         c.update(csrf(request))
         print "performing load"
-        return  HttpResponse(renderLoad_generator(c), content_type="text/html")
+        loadData = ('loadData' in request.POST and "Y" == request.POST['loadData'])
+        return  HttpResponse(renderDbLoad_generator(c, loadData, dataSource, dataStructure), content_type="text/html")
     else:
         requestContext = RequestContext(request)
-        print "loading Get Screen"
-        return render_to_response("loaddb_form.djt.html", {"assets": STATIC_URL}, context_instance=requestContext)
+        return render_to_response("loaddb_form.djt.html", {}, context_instance=requestContext)
+
+
