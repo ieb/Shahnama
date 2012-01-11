@@ -10,7 +10,7 @@ from ShahnamaDJ.datatypes.hijri import Hijri
 from ShahnamaDJ.views import recordutils
 from ShahnamaDJ.views.recordutils import format_date, wash_notes
 from ShahnamaDJ.views.stringbuilder import StringPattern
-from ShahnamaDJ.settings import STATIC_URL, PAINTINGS_URL, SERVER_ROOT_URL
+from ShahnamaDJ.settings import PAINTINGS_URL, SERVER_ROOT_URL
 
 
 state_tmpl = StringPattern('ms-state.stb')
@@ -42,7 +42,6 @@ class GalleryView(object):
         }
     
     def emit(self):
-        print "Gallery Emit of %s " % (self.galleryData,)
         return {
             'main': [x for x in sorted(self.galleryData,key = lambda x: x['id']) if not x['decoration']],
             'decorated': sorted(self.galleryData,key = lambda x: x['id'])
@@ -56,7 +55,6 @@ class AbstractView(object):
     request = None
     json = None
     summaryMap = None
-    galleryMap = None
 
     
     def __init__(self, request, id=None, model=None):
@@ -79,12 +77,13 @@ class AbstractView(object):
             self.json = {}
 
     def buildContext(self, data):
-        x = {
-            'assets' : STATIC_URL,
-            'data' : data
-            }
-        print x
+        x = data
         return x
+    
+    def getSafeProperty(self, name, default=''):
+        if name in self.json:
+            return self.json[name]
+        return default
 
     class Meta:
         abstract = True
@@ -102,9 +101,7 @@ class ChapterView(AbstractView):
         return render_to_response("chapter.djt.html", self.buildContext(self.summary()))
     
     def summary(self,quick = False):
-        print "Calling Summary for %s " % (self.summaryMap)
         if self.summaryMap is None:
-            print "Creating Summary"
             allChapters = Chapter.objects.all()
             chapters = []
             gallery = GalleryView()
@@ -118,7 +115,7 @@ class ChapterView(AbstractView):
                     'url': "%s/chapter/%s" % (SERVER_ROOT_URL, chapter.id)
                 })
                 if self.id is not None and str(self.id) == str(chapter.id):
-                    gallery.galleryData = [ SceneView(self.request, model = x ).gallery() for x in chapter.scenes]
+                    gallery.galleryData = [ SceneView(self.request, model = x ).gallery() for x in chapter.scene_set.all()]
                 
             extra = {
                      # this sort should be done in the query above
@@ -136,9 +133,7 @@ class ChapterView(AbstractView):
             return (0,'',s)
     
     def gallery(self):
-        if self.galleryMap is None:
-            self.galleryMap = dict()
-        return self.galleryMap
+        None
     
     
     
@@ -161,7 +156,6 @@ class CountryView(AbstractView):
                     else:
                         hkey = "Other"
                     if self.id is not None and str(self.id) == str(country.id):
-                        print "Country locations are %s " % (country.location_set.all(),)
                         gallery.galleryData = [LocationView(self.request, model = x).gallery("FullLocationName") for x in country.location_set.all()]
                     countriesMap[hkey].append({
                         'name': name,
@@ -177,10 +171,7 @@ class CountryView(AbstractView):
         return self.summaryMap
     
     def gallery(self):
-        if self.galleryMap is None:
-            self.galleryMap = dict()
-        return self.galleryMap
-            
+        None
 
 class AuthorityView(AbstractView):
     
@@ -206,8 +197,6 @@ class AuthorityView(AbstractView):
         return self.json;
 
 class IllustrationView(AbstractView):
-    
-    painting = None
     
     
     def render(self):
@@ -272,23 +261,26 @@ class IllustrationView(AbstractView):
                 self.summaryMap = {}
         return self.summaryMap
     
-    def loadViewGallery(self):
-        if self.galleryMap is None:
-            self.galleryMap = dict()
-        return self.galleryMap
+    def gallery(self,key=None):
+        self.loadJson()
+        return GalleryView.entry(self.getSafeProperty('painting_url'),
+                                 self.getSafeProperty('url'),
+                                 self.getSafeProperty('TitleEnglish'),
+                                 self.getSafeProperty('FolioNumber'),
+                                 ManuscriptView(self.request,model=self.model.manuscript)._text(),
+                                 self.getSafeProperty(key))
+        
+
     
-    def loadViewPainting(self):
-        if self.painting is None:
-            self.loadJson()
-            pbase = self.request.get_server_attr('paintings_url')
-            if 'Painting' in self.json and self.json['Painting']:
-                painting = "%s/Painting/%s.jpg" % (pbase,self.json['Painting'])
-            else:
-                painting = ''
-        return painting
-
-
-
+    def painting(self):
+        self.loadJson()
+        pbase = PAINTINGS_URL
+        if 'Painting' in self.json and self.json['Painting']:
+            return "%s/Painting/%s.jpg" % (pbase,self.json['Painting'])
+        else:
+            return ''
+    
+    
 
 
 
@@ -393,20 +385,20 @@ class ManuscriptView(AbstractView):
             out.append("text %s x %s mm" % (str(tw), str(th)))
         return ", ".join(out)
     
+
     def _canon_image(self):
         if self.canon_image is None:
             self.loadJson()
-            pbase = PAINTINGS_URL
+            self.canon_image = ''
             for type in ('Colophon','SamplePage'):
                 if self.json[type]:
-                    return self._image_url(type)
-            if 'illustrations' in self.json and len(self.json['illustrations']):
-                for d in self.json['illustrations']:        
-                    p = IllustrationView(self.request, id=d).painting()
-                    if p:
-                        self.canon_image = p
-                        break
-            self.canon_image = ''
+                    self.canon_image = self._image_url(type)
+                    return self.canon_image
+            for illustration in self.model.illustration_set.all():
+                p = IllustrationView(self.request, model=illustration).painting()
+                if p:
+                    self.canon_image = p
+                    break
         return self.canon_image
     
         
@@ -476,6 +468,7 @@ class ManuscriptView(AbstractView):
 
 class SceneView(AbstractView):
     
+    canon_image = None
     
     def render(self):
         return render_to_response("scene.djt.html", self.buildContext(self.summary()))
@@ -495,7 +488,6 @@ class SceneView(AbstractView):
                 }
                 gallery = GalleryView()
                 if not quick:
-                    print "Model is %s " % (self.model)
                     gallery.galleryData = [ IllustrationView(self.request, model = x) for x in self.model.illustration.all()]
                 chapter = ChapterView(self.request, self.mode.chapter)
                 extra = {
@@ -511,8 +503,25 @@ class SceneView(AbstractView):
                 self.summaryMap = {}
         return self.summaryMap;
     
-    def gallery(self):
-        None
+    def gallery(self, key=None):
+        self.loadJson()
+        return GalleryView.entry(self._canon_image(),
+                                 "%s/scene/%s" % (SERVER_ROOT_URL,self.model.id),
+                                 '',self.getSafeProperty('EnglishTitle'),'',self.getSafeProperty(key))
+    def _canon_image(self):
+        if self.canon_image is None:
+            self.loadJson()
+            for type in ('Colophon','SamplePage'):
+                if type in self.json:
+                    return self._image_url(type)
+            self.canon_image= ''
+            for illustration in self.model.illustration_set.all():
+                p = IllustrationView(self.request, model = illustration).gallery("FolioNumber")
+                if p['image'] is not None:
+                    self.canon_image = p['image']
+                    break;
+        return self.canon_image
+
 
 class ReferenceView(AbstractView):
     def loadObject(self):
@@ -545,6 +554,7 @@ class ReferenceView(AbstractView):
 
 citation_tmpl = StringPattern('citation.stb')
 
+
     
     
 def locationView(request, id):
@@ -567,3 +577,4 @@ def chapterView(request, id):
         chapterView = ChapterView(request, id=id)
         return chapterView.render()
 
+    
