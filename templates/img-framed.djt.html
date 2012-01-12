@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" >
   <head>
+{% load static %}
+{% get_static_prefix as assets %}
+
 		<!-- XXX move to custom mini-frame -->
-    <script type="text/javascript" src="http://shahnama.caret.cam.ac.uk/new/assets/jquery/jquery-1.4.4.min.js"></script>
-    <link type="text/css" href="{{ assets }}jquery-ui/css/custom-theme/jquery-ui-1.8.7.custom.css" href="jquery-ui/css/custom-theme/jquery-ui-1.8.7.custom.css" rel="Stylesheet" />	
+    <script type="text/javascript" src="{{ assets }}jquery-1.6.1.min.js"></script>
+    <link type="text/css" href="{{ assets }}jquery-ui/css/custom-theme/jquery-ui-1.8.7.custom.css"  rel="Stylesheet" />	
     <script type="text/javascript" src="{{ assets }}jquery-ui/js/jquery-ui-1.8.7.custom.min.js"></script>
 
   	<link rel="stylesheet" type="text/css" href="{{ assets }}Jcrop/css/jquery.Jcrop.css"/>
@@ -11,21 +14,26 @@
 
   </head>
 	<body>
-	  {% if not none %}
+	  {% if img %}
 	  <div>
+            {% csrf_token %}
     	  <img id="m" src="{{ img }}" style="display: none;" />
-    	  <a id="trim" href="{{ trim }}" style="display: none;"></a>
+    	  <a id="trim" href="trim.json" style="display: none;"></a>
+    	  
     	  <script>
     	  	$(function() {
     	  		url = $('#trim').attr('href');
+    	  		console.log("Loading "+url)
     	  		$.get(url,{},function(data) {
+    	  		    
     	  			if(data.x1)
     	  				var start = [data.x1,data.y1,data.x2,data.y2];
     	  			else
     	  				var start = undefined;
     	  			var $h = $('html',document);
-    					$('#m').css('display','block');
-    					$('#m').Jcrop({
+    	  			console.log("Displaying image and activating Crop "+start);
+    				$('#m').css('display','block');
+    				$('#m').Jcrop({
     						setSelect: start,
     						boxWidth: 320,
     						boxHeight: 480,
@@ -34,22 +42,33 @@
     							$h.data('y1',c.y);
     							$h.data('x2',c.x2);
     							$h.data('y2',c.y2);
+                               console.log("xl=["+c.x+"] yl=["+c.y+"] xh=["+c.x2+"] yh=["+c.y2+"] xw=["+c.w+"] xh=["+c.h+"]");
     						}
     					});
-    	  		},'json');
+    	  		},'json')
+    	  		.error(console.log("Failed"));
     	  	});
     	  	function save() {
     	  		var $h = $('html',document);
     	  		var url = $('#trim').attr('href');
+    	  		var token = $('input:hidden[name=csrfmiddlewaretoken]').val();
+    	  		console.log("Middleware Token "+token);
     				$.post(url,{
     						'x1': $h.data('x1') || 0,
     						'y1': $h.data('y1') || 0,
     						'x2': $h.data('x2') || $('#m').width(),
-    						'y2': $h.data('y2') || $('#m').height()
+    						'y2': $h.data('y2') || $('#m').height(),
+    						'csrfmiddlewaretoken' : $('input:hidden[name=csrfmiddlewaretoken]').val()
     					});
     	  	}
     	  </script>
+    	  
         </div>
         {% endif %}
+    {% if debug %}
+    <pre>
+        {% debug %}
+    </pre>
+    {% endif %}
 	</body>
 </html>

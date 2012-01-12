@@ -57,8 +57,8 @@
 	<div id="frame-content-article">
 	    <dl>
 	    {% for page in pages %}
-	       <dt>{{ about }}</td>
-	       <dd>{{ page.short_text }} <a href="/site/{{ page.id }}">{{ page.short_title }}</a> </dd> 
+	       <dt>{{ page.meta.about }}</td>
+	       <dd>{{ page.meta.short_text }} <a href="/page/{{ page.meta.id }}">{{ page.meta.short_title }}</a> </dd> 
 	    {% endfor %}
 	    </dl>
     </div>

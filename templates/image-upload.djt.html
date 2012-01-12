@@ -1,8 +1,8 @@
-{# metal:define-macro="imageupload" #}
 	<div id="upload-dialog" style="display: none">
 		<a id="upload-root" href="{{ uphere }}" style="display: none;">&nbsp;</a>
 		<iframe name="upload_target" id="upload_target" style="width: 350px; height: 400px; float: left;"></iframe>
 		<form method="post" enctype="multipart/form-data" style="display: none;" target="upload_target">
+		            {% csrf_token %}
 			<input name="file" id="file" type="file" />
 			<input type="submit" name="action" value="Send Image" />
 		</form>

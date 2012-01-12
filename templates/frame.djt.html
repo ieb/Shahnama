@@ -81,8 +81,8 @@
 
 	  <div id="frame-front">
 	    {% block beforeform %} {% endblock %}
-	    {% if not post %}
-	    <form method="POST" action="{{ post }}" >
+	    {% if postaction %}
+	    <form method="POST" action="{{ postaction }}" >
 	    {% endif %}
 	    <div id="front-left">
 	      {% block superleft %} {% endblock %}

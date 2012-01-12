@@ -39,12 +39,12 @@
               {% for value in pages %}
                 <li>
                     <h3>
-                        <a href="/site/{{ value.id }}">
-                            <img src="{{ value.thumbnail }}"  width="96" height="70"/>
-                        <span>{{ value.short_title }}</span>
+                       <a href="/page/{{ value.meta.id }}">
+                            <img src="{{ value.pageimages.thumbnail_crop }}"  width="96" height="70"/>
+                        <span>{{ value.meta.short_title }}</span>
                         </a>
                     </h3>
-                      <span>{{ value.short_text }}</span>
+                      <span>{{ value.meta.short_text }}</span>
                 </li>
               {% endfor %}
             </ul>

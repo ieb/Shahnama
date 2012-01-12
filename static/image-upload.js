@@ -8,7 +8,7 @@ $(function() {
 		var base = $('#upload-root').attr('href')+which;
 		// localise
 		$('#upload-dialog iframe').attr('src',base+"/framed");
-		$('#upload-dialog form').attr('action',base); // jQuery bug #3113
+		$('#upload-dialog form').attr('action',base+"/framed"); // jQuery bug #3113
 		return false;
 	});
 	$('#upload-dialog').dialog({ autoOpen: false, width: 700, height: 500, title: "Upload Image" });

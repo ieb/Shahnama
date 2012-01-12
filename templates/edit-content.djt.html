@@ -1,0 +1,144 @@
+{% extends "frame.djt.html" %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ assets }}front.css"/>
+    <script type="text/javascript" src="{{ assets }}tinymce/jscripts/tiny_mce/jquery.tinymce.js"></script>
+    <link rel="stylesheet" type="text/css" src="{{ assets }}Jcrop/css/jquery.Jcrop.css"/>
+    <script type="text/javascript" src="{{ assets }}Jcrop/js/jquery.Jcrop.js"></script>
+    <script type="text/javascript" src="{{ assets }}image-upload.js"></script>
+{% endblock %}
+
+
+{% block main %}
+  <div>
+
+
+		<a id="tinymce-script" style="display: none" href="{{ assets }}tinymce/jscripts/tiny_mce/tiny_mce.js"></a>
+<script type="text/javascript">
+	$('textarea.tinymce').ready(function() {
+		$('textarea.tinymce').each(function() {
+
+			var href= $('#tinymce-script').attr('href');
+		
+			var top = $(this).offset().top;
+			var height = $(window).height();
+			
+			$(this).height(height-top-32);
+			
+			$('textarea.tinymce').tinymce({
+				// Location of TinyMCE script
+				script_url : href,
+	
+				// General options
+				theme : "advanced",
+	//			plugins : "pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,advlist",
+	
+				// Theme options
+				theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,cut,copy,paste,pastetext,pasteword,|,bullist,numlist,blockquote,|,link,unlink,|,code",
+				theme_advanced_buttons2 : "",
+				theme_advanced_buttons3 : "",
+				theme_advanced_buttons4 : "",
+				theme_advanced_toolbar_location : "top",
+				theme_advanced_toolbar_align : "left",
+				theme_advanced_statusbar_location : "bottom",
+				theme_advanced_resizing : true,
+				theme_advanced_resizing_use_cookie: false,
+	
+				// Example content CSS (should be your site CSS)
+		//		content_css : "css/content.css",
+	
+				// Drop lists for link/image/media/template dialogs
+				template_external_list_url : "lists/template_list.js",
+				external_link_list_url : "lists/link_list.js",
+				external_image_list_url : "lists/image_list.js",
+				media_external_list_url : "lists/media_list.js",
+	
+				// Replace values for the template plugin
+				template_replace_values : {
+				}
+			});			
+		});
+	});
+	
+	$(function() {
+    	$('#title').change(function() {
+    	   var $obj = $(this);
+    	   console.log("hi "+$obj.val());
+    	   if($obj.val()) {
+    	       if(!$('#short-title').val())
+    	           $('#short-title').val($obj.val());
+               if(!$('#short-text').val())
+                   $('#short-text').val($obj.val());	       
+    	   }
+    	});
+    });    
+</script>
+
+ {% csrf_token %}
+	  <input type="text" name="title" id="title" value="{{ page.title }}"
+  				 style="font-size: 32px; width: 600px"/> <!-- XXX -->
+  	<input type="submit" name="update" value="update" value="Save"/>
+    <textarea id="content" name="text" class="tinymce" style="width:100%; height: " >{{ page.text }}</textarea>
+
+  </div>
+{% endblock %}
+  
+
+{% block superleft %}  
+  <div id="front-left-nav" >
+    <div>
+      <h3>Very short text summary</h3>
+      <p>(as displayed on left hand side)</p>
+    </div>
+		<div>
+			<p>
+	  	Title: <input type="text" id="short-title" name="short-title" value="{{ page.short_title }}"
+  				 	 style="width: 200px"/> <!-- XXX --> <br/>(max 4 words)
+			</p><p>
+	  	Text: <input type="text" id="short-text" name="short-text" value="{{ page.short_text }}"
+  				   style="width: 200px"/> <!-- XXX --> <br/>(max 12 words)
+  		</p>
+        <p>
+            About: <input type="text" id="about" name="about" value="{{ page.about }}"
+                     style="width: 200px"/> <!-- XXX --> <br/>(if not blank will appear in "about" section in header under that name)
+            
+        </p>
+  	</div>
+  </div>
+  
+{% endblock %}
+  
+
+{% block beforeform %}  
+  <div>
+    {% include "image-upload.djt.html" %}
+  </div>
+{% endblock %}
+  
+
+{% block left %}  
+  <div>
+  	<div id="front-float">
+  		<div id="front-float-relax">
+				<p>
+					Current thumbnail image:
+				</p>
+				<p>
+					<img class="thumbnail-image optional-image" src="{{ pageimages.thumbnail_crop }}" width="96" style="border: 4px solid black;"/>
+				</p>
+				<p>
+					<button class="image-uploader" name="thumbnail-image">add/change thumbnail image</button>
+				</p>
+				<p>
+					Current main image:
+				</p>
+				<p>
+					<img class="main-image  optional-image" src="{{ pageimages.main_crop }}" width="100%" style="border: 4px solid black;" id="main-img"/>
+				</p>
+				<p>
+					<button class="image-uploader" name="main-image">add/change main image</button>
+				</p>
+			</div>
+  	</div>
+  </div>
+{% endblock %}

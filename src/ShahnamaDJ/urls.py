@@ -5,9 +5,10 @@ from django.contrib import admin
 from ShahnamaDJ.records.views import chapterView, countryView, illustrationView,\
     locationView, manuscriptView, sceneView
 from ShahnamaDJ.migration.loaddb import loadDb
-from ShahnamaDJ.settings import SOURCE_DATA
+from ShahnamaDJ.settings import SOURCE_DATA, DEBUG, MEDIA_URL, MEDIA_ROOT
 from ShahnamaDJ.loaddb import RECORDS_SOURCE_DATA, CONTENT_SOURCE_DATA
-from ShahnamaDJ.content.views import pageView, pageListView, homeView
+from ShahnamaDJ.content.views import pageView, pageListView, homeView, pageEdit,\
+    pageCreate, pageFramedImageView, pageTrimImageView
 admin.autodiscover()
 
 
@@ -34,7 +35,11 @@ urlpatterns = patterns('',
     url(r'^$', homeView, name='home'),
     url(r'^index.html$', homeView, name='home'),
     url(r'^front.*$', homeView, name='home'),
-    url(r'^site/(.*)$', pageView),
+    url(r'^page/(.*)_new$', pageCreate, {'onsave' : '/page/%s'}),
+    url(r'^page/(.*)_edit$', pageEdit, {'onsave' : '/page/%s'}),
+    url(r'^page/(.*)_(.*)/framed$', pageFramedImageView, {'onsave' : '/page/%s_%s/framed'}),
+    url(r'^page/(.*)_(.*)/trim.json$', pageTrimImageView),
+    url(r'^page/(.*)$', pageView),
     url(r'^chapter/(.*)', chapterView, name='chapter'),
     url(r'^country/(.*)', countryView, name='country'),
     url(r'^illustration/(.*)', illustrationView, name='illustration'),
@@ -42,3 +47,13 @@ urlpatterns = patterns('',
     url(r'^manuscript/(.*)', manuscriptView, name='manuscript'),
     url(r'^scene/(.*)', sceneView, name='scene'),
 )
+if DEBUG:
+    from django.views.static import serve
+    _media_url = MEDIA_URL
+    if _media_url.startswith('/'):
+        _media_url = _media_url[1:]
+        urlpatterns += patterns('',
+                                (r'^%s(?P<path>.*)$' % _media_url,
+                                serve,
+                                {'document_root': MEDIA_ROOT}))
+    del(_media_url, serve)
