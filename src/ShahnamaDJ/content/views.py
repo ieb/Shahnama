@@ -9,14 +9,14 @@ from django.http import HttpResponseNotFound, \
     HttpResponseBadRequest, HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.template.context import RequestContext
+from django.conf import settings
 import json
 from django.utils.http import urlquote, urlquote_plus, urlencode
-from ShahnamaDJ.settings import MEDIA_URL, MEDIA_ROOT
 import Image
 import os
 import shutil
 
-
+MEDIA_URL, MEDIA_ROOT = (settings.MEDIA_URL, settings.MEDIA_ROOT)
 
 class AbstractContentView(object):
     
