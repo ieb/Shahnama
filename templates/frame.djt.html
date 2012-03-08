@@ -25,7 +25,7 @@
     <div id="frame-all">
 
 	  <div id="frame-header">
-	    <a id="title-link" href="{{ server }}/front">home</a>
+	    <a id="title-link" href="{% url home %}">home</a>
 		<h1 id="frame-title">
 		  <span>Shahnama Project</a></span> <!-- span is for special font -->
 		</h1>
@@ -59,8 +59,9 @@
 		  -->
 		 </ul>
 		<ul id="frame-nav-left">
-          <li><a href="{{ server }}/country" >Find by location</a></li>
-          <li><a href="{{ server }}/chapter" >Find by scene</a></li>
+          <li><a href="{% url country "" %}" >Find by location</a></li>
+          {% comment %} FIXME: Should this link to scene rather than chapter? {% endcomment %}
+          <li><a href="{% url chapter "" %}" >Find by scene</a></li> 
           <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/bibliography">Bibliography</a></li>
 		  <!--
 		  <li><a href="#">Manuscripts</a></li>

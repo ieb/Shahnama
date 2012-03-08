@@ -2,13 +2,17 @@ from django.conf.urls.defaults import patterns, include, url
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from django.conf import settings
 from ShahnamaDJ.records.views import chapterView, countryView, illustrationView,\
     locationView, manuscriptView, sceneView
 from ShahnamaDJ.migration.loaddb import loadDb
-from ShahnamaDJ.settings import SOURCE_DATA, DEBUG, MEDIA_URL, MEDIA_ROOT
 from ShahnamaDJ.loaddb import RECORDS_SOURCE_DATA, CONTENT_SOURCE_DATA
 from ShahnamaDJ.content.views import pageView, pageListView, homeView, pageEdit,\
     pageCreate, pageFramedImageView, pageTrimImageView
+
+SOURCE_DATA, DEBUG, MEDIA_URL, MEDIA_ROOT = (settings.SOURCE_DATA,
+        settings.DEBUG, settings.MEDIA_URL, settings.MEDIA_ROOT)
+
 admin.autodiscover()
 
 
