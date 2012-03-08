@@ -18,26 +18,63 @@
     <div id="frame-main">
       <div id="frame-article">
         <div id="frame-main-top">
+        <h1>Administrative Interface to load data</h1>
+          <p>
+            To load the database with data you must first have run the <b>Migrate.py</b> script to create
+            a copy of the database ready for loading on the webserver. When you have done that you can
+            load the data into the data base using the form below.
+          </p>
+          <h2>Load Data and Resolve references</h2>
+                <form method="POST" action="/admin/loadDb" >
+                   {% csrf_token %}
+                   <p>
+                   Clicking this button will cause resolve the relationships between <b>Shahnama data</b> already
+                   loaded into the database. If you want to load up new data into the database 
+                   be sure to tick the checkbox.
+                   </p>
+                   <p>
+                   click this check box
+                   <input type="checkbox" name="loadData" id="loadDataDb" value="Y" />
+                   to load new Shahnama data 
+                   from {{ SOURCE_DATA }} on the web server disk.
+                   </p>
+                   <p>
+                   Then click this button to load the data and resolve.<br />
+                   <input type="submit" name="submit" value="Load Database" />
+                </form>
+           <h2>Load Editorial (Event) content and resolve references</h2>
+                <form method="POST" action="/admin/loadEvents" >
+                   {% csrf_token %}
+                   <p>
+                   Clicking this button will cause resolve the relationships between <b>Editorial Content</b> already
+                   loaded into the database. If you want to load up new editorial content into the database 
+                   be sure to tick the checkbox. This data appears in the website under <a href="/page">Editorial Content</a>
+                   </p>
+                   <p>
+                   click this check box
+                   <input type="checkbox" name="loadData" id="loadDataEvent" value="Y" /> 
+                   to load new Editorial content 
+                   from {{ SOURCE_DATA }}/content on the web server disk. 
+                   </p>
+                   <p>
+                   Then click this button to load the data and resolve
+                   embeded references.<br />
+                   
+                   <input type="submit" name="submit" value="Load Events" />
+                   </p>
+                </form>
+          </p>
+          <p>
         </div>
         <div id="frame-main-left">
-          <div id="main-ill">
+          <div id="manuscript-details">
+            <div class="manuscript-details-list">
+           </div>
           </div>
         </div>
         <div id="frame-main-right">
           <div id="manuscript-details">
             <div class="manuscript-details-list">
-                <form method="POST" action="/admin/loadDb" >
-                   {% csrf_token %}
-                   <input type="submit" name="submit" value="Load Database" />
-                   <label for="loadDataDb">with Data</label>
-                   <input type="checkbox" name="loadData" id="loadDataDb" value="Y" />
-                </form>
-                <form method="POST" action="/admin/loadEvents" >
-                   {% csrf_token %}
-                   <input type="submit" name="submit" value="Load Events" />
-                   <label for="loadDataEvent">with Data</label>
-                   <input type="checkbox" name="loadData" id="loadDataEvent" value="Y" />
-                </form>
             </div>
           </div>
         </div>
