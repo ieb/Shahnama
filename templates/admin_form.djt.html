@@ -26,7 +26,7 @@
     <div id="frame-all">
 
       <div id="frame-header">
-        <a id="title-link" href="{{ server }}/front">home</a>
+        <a id="title-link" href="{% url home %}">home</a>
         <h1 id="frame-title">
           <span>Shahnama Project</span> <!-- span is for special font -->
         </h1>
@@ -60,8 +60,8 @@
           -->
          </ul>
         <ul id="frame-nav-left">
-          <li><a href="{{ server }}/country" >Find by location</a></li>
-          <li><a href="{{ server }}/chapter" >Find by scene</a></li>
+          <li><a href="{% url country '' %}" >Find by location</a></li>
+          <li><a href="{% url chapter '' %}" >Find by scene</a></li>
           <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/bibliography">Bibliography</a></li>
           <!--
           <li><a href="#">Manuscripts</a></li>
@@ -83,9 +83,6 @@
       <div id="frame-front">
       
         {% block beforeform %} {% endblock %}
-        {% if not post %}
-        <form method="POST" action="{{ post }}" >
-        {% endif %}
         <div id="front-left">
           {% block superleft %} {% endblock %}
           {% block left %} {% endblock %}
@@ -98,9 +95,6 @@
                 <div class="front-special-clear">&nbsp;</div>
           </div>
         </div>
-        {% if not post %}
-        </form>
-        {% endif %}
       </div>
       <div id="frame-footer">
         <div id="frame-logo">&#160;</div>
