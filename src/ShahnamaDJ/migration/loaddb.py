@@ -13,6 +13,7 @@ from django.template.context import RequestContext
 from django.core.context_processors import csrf
 from django.db.backends.sqlite3.base import IntegrityError
 from django.views.decorators.http import condition
+from django.conf import settings
 import time
 
 '''
@@ -141,7 +142,7 @@ def renderDbLoad_generator(context, loadData, dataSource, dataStructure):
     print "loading from DB"
     for message in dbloader:
         yield message
-    yield render_to_string("loaddb_post.djt.html", {})
+    yield render_to_string("loaddb_post.djt.html", { 'SOURCE_DATA' : settings.SOURCE_DATA})
 
 '''
 The load view which covers both post and get. The no etag condition causes the 
@@ -159,6 +160,6 @@ def loadDb(request, dataSource, dataStructure):
         return  HttpResponse(renderDbLoad_generator(c, loadData, dataSource, dataStructure), content_type="text/html")
     else:
         requestContext = RequestContext(request)
-        return render_to_response("loaddb_form.djt.html", {}, context_instance=requestContext)
+        return render_to_response("loaddb_form.djt.html", { 'SOURCE_DATA' : settings.SOURCE_DATA}, context_instance=requestContext)
 
 
