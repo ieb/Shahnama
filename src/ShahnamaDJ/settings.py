@@ -153,5 +153,6 @@ LOGGING = {
 SOURCE_DATA = '/Users/ieb/Caret/shahnama/sh2/sh2dj/sourcedata'
 PAINTINGS_URL = 'http://www9.caret.cam.ac.uk/images-qa/70/'
 SERVER_ROOT_URL = ""
-
+LOGIN_URL = SERVER_ROOT_URL + '/accounts/login/'
+LOGOUT_URL = SERVER_ROOT_URL + '/accounts/logout/'
 

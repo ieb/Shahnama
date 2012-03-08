@@ -15,7 +15,6 @@ SOURCE_DATA, DEBUG, MEDIA_URL, MEDIA_ROOT = (settings.SOURCE_DATA,
 
 admin.autodiscover()
 
-
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'ShahnamaDJ.views.home', name='home'),
@@ -25,8 +24,8 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Load the database with information from a set of json files.
-    url(r'^admin/loadDb', loadDb,  {'dataSource' :SOURCE_DATA, 'dataStructure':RECORDS_SOURCE_DATA }),
-    url(r'^admin/loadEvents', loadDb, {'dataSource':SOURCE_DATA, 'dataStructure':CONTENT_SOURCE_DATA }),
+    url(r'^admin/loadDb', loadDb,  {'dataSource' :SOURCE_DATA, 'dataStructure':RECORDS_SOURCE_DATA }, name='loadDb'),
+    url(r'^admin/loadEvents', loadDb, {'dataSource':SOURCE_DATA, 'dataStructure':CONTENT_SOURCE_DATA }, name='loadEvents'),
     url(r'^admin/pages', pageListView),
 
     # Uncomment the next line to enable the admin:
@@ -40,10 +39,10 @@ urlpatterns = patterns('',
     url(r'^index.html$', homeView, name='home'),
     url(r'^front.*$', homeView, name='home'),
     url(r'^page/(.*)_new$', pageCreate, {'onsave' : '/page/%s'}),
-    url(r'^page/(.*)_edit$', pageEdit, {'onsave' : '/page/%s'}),
+    url(r'^page/(.*)_edit$', pageEdit, {'onsave' : '/page/%s'}, name='page-edit'),
     url(r'^page/(.*)_(.*)/framed$', pageFramedImageView, {'onsave' : '/page/%s_%s/framed'}),
     url(r'^page/(.*)_(.*)/trim.json$', pageTrimImageView),
-    url(r'^page/(.*)$', pageView),
+    url(r'^page/(.*)$', pageView, name='page'),
     url(r'^chapter/(.*)', chapterView, name='chapter'),
     url(r'^country/(.*)', countryView, name='country'),
     url(r'^illustration/(.*)', illustrationView, name='illustration'),

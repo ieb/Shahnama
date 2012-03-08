@@ -39,7 +39,7 @@
               {% for value in pages %}
                 <li>
                     <h3>
-                       <a href="/page/{{ value.meta.id }}">
+                       <a href="{% url page value.meta.id %}">
                             <img src="{{ value.pageimages.thumbnail_crop }}"  width="96" height="70"/>
                         <span>{{ value.meta.short_title }}</span>
                         </a>
