@@ -77,7 +77,7 @@ class Gregorian:
             return ''
         value = int(value)
         if th:
-            value = _th(value)
+            value = Gregorian._th(value)
         return "%s%s" % (value,' ' if add_blank else '')
 
     def _from_parts(self,s,y,m,d): # month is 1-based, s is specifier (as a string)
@@ -143,9 +143,9 @@ class Gregorian:
             return "%s%s%s" % (self._num_to_blank(self._d,th = True),self._month_to_long(self._m),self._num_to_blank(self._y,False))
         elif self._s[0] == 'c':
             if self._s == 'c':
-                return "%s century" % _th(self._y)
+                return "%s century" % Gregorian._th(self._y)
             else:
-                return "%s century, %s" % (_th(self._y),Gregorian.uncertainties[self._s[1:]])
+                return "%s century, %s" % (Gregorian._th(self._y),Gregorian.uncertainties[self._s[1:]])
         elif self._s[0:2] == 'hc':
             return "%s%s%s, converted from nearest Hijri %s" % (self._num_to_blank(self._d,th = True),
                                                                 self._month_to_long(self._m),
