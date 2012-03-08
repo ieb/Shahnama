@@ -69,7 +69,10 @@ class StringPattern:
             if k and k in model and model[k]:
                 v = model[k]
             if v and 'authority' in node.attrib:
-                v = Authority.objects.get(name=node.attrib['authority'],key=v).data
+                try:
+                    v = Authority.objects.get(name=node.attrib['authority'],key=v).data
+                except:
+                    pass
             return escape(unicode(v))
         elif node.tag == 'join':
             out = [self._apply_node(x,request,model) for x in node]
