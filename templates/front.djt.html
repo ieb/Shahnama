@@ -39,8 +39,10 @@
               {% for value in pages %}
                 <li>
                     <h3>
-                       <a href="/page/{{ value.meta.id }}">
+                       <a href="{% url page value.meta.id %}">
+                            {% if value.pageimages.thumbnail_crop %}
                             <img src="{{ value.pageimages.thumbnail_crop }}"  width="96" height="70"/>
+                            {% endif %}
                         <span>{{ value.meta.short_title }}</span>
                         </a>
                     </h3>
@@ -49,7 +51,7 @@
               {% endfor %}
             </ul>
             <div id="new-event">
-              <a href="{{ server.page_create }}">new news/event ...</a>
+              <a href="{% url page-new '' %}">new news/event ...</a>
             </div>
         </div>      
   </div>

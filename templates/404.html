@@ -1,25 +1,34 @@
 {% extends "frame.djt.html" %}
-
-
+  
 {% block head %}
         <link rel="stylesheet" type="text/css" href="{{ assets }}front.css"/>
-        <title>List Of Pages</title>
 {% endblock %}
-
+  
+{% block main %}
+ <div>
+     <div id="front-float"><img  src="{{ assets }}front-page/front-main.jpg" width="320" style="border: 4px solid black;"/></div>
+     <h1>Page Not Found</h1>
+     <p>
+         The page you requested was not found on this server. If you typed in the address of this page by hand then check for typos. If you followed a link to get here then consider informing the owner of the website that the link is broken.
+     </p>
+     <div class="front-special-clear">&nbsp;</div>
+ </div>
+{% endblock %}
+  
 {% block left %}
   <div>
         <div id="front-left-events">
             <h2>News &amp; Events</h2>
             <ul>
-              {% for value in evenList %}
+              {% for value in pages %}
                 <li>
                     <h3>
-                        <a href="{{ value.url }}">
-                            <img src="{{ value.thumbnail }}"  width="96" height="70"/>
-                        <span>{{ value.short_title }}</span>
+                       <a href="{% url page value.meta.id %}">
+                            <img src="{{ value.pageimages.thumbnail_crop }}"  width="96" height="70"/>
+                        <span>{{ value.meta.short_title }}</span>
                         </a>
                     </h3>
-                      <span>{{ value.short_text }}</span>
+                      <span>{{ value.meta.short_text }}</span>
                 </li>
               {% endfor %}
             </ul>
@@ -48,22 +57,6 @@
           </div>
 {% endblock %}
 
+          
+          
 
-{% block main %}  
-  
-  <div>
-
-	<div id="frame-main">
-	<div id="frame-content-article">
-	    <dl>
-	    {% for page in pages %}
-	       <dt>{{ page.meta.about }}</td>
-	       <dd>{{ page.meta.short_text }} <a href="{% url page page.meta.id %}">{{ page.meta.short_title }}</a> </dd> 
-	    {% endfor %}
-	    </dl>
-    </div>
-    </div>
-
-  </div>
-  
-{% endblock %}

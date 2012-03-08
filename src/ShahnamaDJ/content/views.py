@@ -4,7 +4,7 @@ Created on Jan 10, 2012
 @author: ieb
 '''
 from ShahnamaDJ.content.models import Content, ContentMeta
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponseNotFound, \
     HttpResponseBadRequest, HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
@@ -15,6 +15,7 @@ from django.utils.http import urlquote, urlquote_plus, urlencode
 import Image
 import os
 import shutil
+import logging
 
 MEDIA_URL, MEDIA_ROOT = (settings.MEDIA_URL, settings.MEDIA_ROOT)
 
@@ -106,7 +107,7 @@ class PageView(AbstractContentView):
         self.saveJson();
         self.model.buildRelationships()
         self.model.save()
-        return HttpResponseRedirect(onsave % (urlquote(self.model.id)))
+        return redirect(onsave, self.model.id)
 
     def updateTrimImage(self, requestImageType):
         self.loadModel()
@@ -197,7 +198,8 @@ class PageView(AbstractContentView):
                     im = im.crop((int(imageTrimInfo['x1']),int(imageTrimInfo['y1']),int(imageTrimInfo['x2']),int(imageTrimInfo['y2'])))
                     im.save(self._getImageFile(imageType,True))
                 except Exception as e:
-                    print "Trim Image %s failed %s " % (f,e)
+                    logging.getLogger(__name__).exception(
+                            "Trim Image %s failed" % (f))
                     return False
         return True
 
@@ -217,10 +219,8 @@ class PageView(AbstractContentView):
             imageTrimInfo = None
             if self.json is not None and trimInfoName in self.json and self.json[trimInfoName] is not None:
                 imageTrimInfo = self.json[trimInfoName]
-            self._trimImage(imageType, imageTrimInfo)                
-        return HttpResponseRedirect(onsave % (urlquote(self.id), urlquote(requestImageType)))
-
-        
+            self._trimImage(imageType, imageTrimInfo)               
+        return redirect(onsave, self.id, requestImageType)
     
     def getPages(self):
         pages = []

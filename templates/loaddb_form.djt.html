@@ -25,7 +25,7 @@
             load the data into the data base using the form below.
           </p>
           <h2>Load Data and Resolve references</h2>
-                <form method="POST" action="/admin/loadDb" >
+                <form method="POST" action="{% url loadDb %}">
                    {% csrf_token %}
                    <p>
                    Clicking this button will cause resolve the relationships between <b>Shahnama data</b> already
@@ -43,12 +43,12 @@
                    <input type="submit" name="submit" value="Load Database" />
                 </form>
            <h2>Load Editorial (Event) content and resolve references</h2>
-                <form method="POST" action="/admin/loadEvents" >
+                <form method="POST" action="{% url loadEvents %}">
                    {% csrf_token %}
                    <p>
                    Clicking this button will cause resolve the relationships between <b>Editorial Content</b> already
                    loaded into the database. If you want to load up new editorial content into the database 
-                   be sure to tick the checkbox. This data appears in the website under <a href="/page">Editorial Content</a>
+                   be sure to tick the checkbox. This data appears in the website under <a href="{% url page '' %}">Editorial Content</a>
                    </p>
                    <p>
                    click this check box
