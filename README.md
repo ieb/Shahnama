@@ -17,7 +17,7 @@ The application itself consists of 2 parts. A simple Content model that manages 
 
 ## Dependencies
 
-The application requires python image utilities, which can be installed with easy_install Image
+The application requires python image utilities, which can be installed with `$ easy_install pil`
 
 ## Data loading.
 

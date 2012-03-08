@@ -2,8 +2,10 @@ import re
 from xml.etree.ElementTree import ElementTree
 from xml.sax.saxutils import escape
 from ShahnamaDJ.records.models import Authority
-from ShahnamaDJ.settings import TEMPLATE_DIRS
+from django.conf import settings
 import os
+
+TEMPLATE_DIRS = settings.TEMPLATE_DIRS
 
 def _th(x):
     try:
@@ -47,7 +49,7 @@ class StringPattern:
             if os.path.isfile(filePath):
                 self._xml.parse(filePath)
                 return
-        raise RuntimeError("Unable to load tempalte %s " % (filename))
+        raise RuntimeError("Unable to load template %s " % (filename))
 
     def _apply_text(self,node,text):
         return escape(unicode(text))

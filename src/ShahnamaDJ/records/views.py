@@ -1,6 +1,7 @@
 # Create your views here.
 
 from django.shortcuts import render_to_response
+from django.conf import settings
 from ShahnamaDJ.records.models import Chapter, JsonModel, Country, Illustration,\
     Authority, Location, Manuscript, Scene, Reference
 import re
@@ -10,8 +11,11 @@ from ShahnamaDJ.datatypes.hijri import Hijri
 from ShahnamaDJ.views import recordutils
 from ShahnamaDJ.views.recordutils import format_date, wash_notes
 from ShahnamaDJ.views.stringbuilder import StringPattern
-from ShahnamaDJ.settings import PAINTINGS_URL, SERVER_ROOT_URL
+from django.template.context import RequestContext
+import json
 
+PAINTINGS_URL, SERVER_ROOT_URL = (settings.PAINTINGS_URL,
+        settings.SERVER_ROOT_URL)
 
 state_tmpl = StringPattern('ms-state.stb')
 text_tmpl = StringPattern('ms-text.stb')
