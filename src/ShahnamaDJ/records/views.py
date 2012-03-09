@@ -13,8 +13,13 @@ from ShahnamaDJ.views.recordutils import format_date, wash_notes
 from ShahnamaDJ.views.stringbuilder import StringPattern
 from django.template.context import RequestContext
 import json
+from ShahnamaDJ.content.models import ContentMeta
 
-PAINTINGS_URL, SERVER_ROOT_URL = (settings.PAINTINGS_URL,
+MANUSCRIPT_URL, LOCATION_URL, ILLUSTRATION_URL, PAINTINGS_URL, SERVER_ROOT_URL = (
+        settings.MANUSCRIPT_URL, 
+        settings.LOCATION_URL,
+        settings.ILLUSTRATION_URL, 
+        settings.PAINTINGS_URL,
         settings.SERVER_ROOT_URL)
 
 state_tmpl = StringPattern('ms-state.stb')
@@ -86,6 +91,12 @@ class AbstractView(object):
         x = data
         if 'debug' in self.request.REQUEST:
             x.update({'debug' : 1})
+        pages = []
+        for page in ContentMeta.objects.all():
+            pages.append({ 'page_url' : "/page/%s" % page.key, 'about' : 'the %s ' % page.key })
+            if ( len(pages) >= 3 ):
+                break;
+        x.update({"top_pages": pages})
         return x
     
     def getSafeProperty(self, name, default='', map = None):
@@ -298,9 +309,8 @@ class IllustrationView(AbstractView):
     
     def painting(self):
         self.loadJson()
-        pbase = PAINTINGS_URL
         if 'Painting' in self.json and self.json['Painting'] is not None:
-            return "%s/Painting/%s.jpg" % (pbase,self.json['Painting'])
+            return "%s/%s.jpg" % (ILLUSTRATION_URL,self.json['Painting'])
         else:
             return ''
     
@@ -327,9 +337,8 @@ class LocationView(AbstractView):
             self.loadJson()
             if self.json is not None:
                 photo = ''
-                pbase = PAINTINGS_URL
                 if self.json is not None and 'Image' in self.json and self.json['Image'] is not None:
-                    photo = "%s/Location/%s.jpg" % (pbase,self.json['Image'])
+                    photo = "%s/%s.jpg" % (LOCATION_URL,self.json['Image'])
                 gallery = GalleryView()
                 if not quick:
                     gallery.galleryData = [GalleryView.entry(photo,'#',self.getSafeProperty('FullLocationName'),'View of location, go forward for manuscripts','','',True)]
@@ -376,10 +385,9 @@ class LocationView(AbstractView):
         if self.cannon_image is None:
             try:
                 self.loadJson()
-                pbase = PAINTINGS_URL
                 self.cannon_image = ''
                 if 'Image' in self.json and self.json['Image'] is not None:
-                    self.cannon_image = "%s/Location/%s.jpg" % (pbase,self.json['Image'])
+                    self.cannon_image = "%s/%s.jpg" % (LOCATION_URL,self.json['Image'])
                     return self.cannon_image
                 for manuscript in self.model.manuscript_set.all():
                     ms = ManuscriptView(self.request, model=manuscript).gallery('AccessionNumber')
@@ -408,8 +416,7 @@ class ManuscriptView(AbstractView):
     def _image_url(self, type):
         try:
             self.loadJson()
-            pbase = PAINTINGS_URL
-            return "%s/%s/%s.jpg" % (pbase, type, self.getSafeProperty(type))
+            return "%s/%s/%s.jpg" % (MANUSCRIPT_URL, type, self.getSafeProperty(type))
         except:
             return None
     

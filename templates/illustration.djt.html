@@ -64,30 +64,31 @@
               <dl id="manuscript-details-body-main">
                 {% if work %}
                 <dt>Work</dt>
-                <dd>{{ work }}</dd>
+                <dd>{{ work|safe }}</dd>
                 {% endif %}
                 {% if date %}
                 <dt>Date</dt>
-                <dd>{{ date }}{# Rajab 1131 (June 1719). (Gregorian date derived from Hijri) #}</dd>
+                <dd>{{ date|safe }} {# Rajab 1131 (June 1719). (Gregorian date derived from Hijri) #}</dd>
                 {% endif %}
                 {% if form %}
                 <dt>Form</dt>
-                <dd>{{ form }}{# 160 x 170 #}</dd>
+                <dd>{{ form|safe }}{# 160 x 170 #}</dd>
                 {% endif %}
                 {% if folio %}
                 <dt>Folio</dt>
-                <dd>{{ folio }}{# 42 #}</dd>
+                <dd>{{ folio|safe }}{# 42 #}</dd>
                 {% endif %}
                 {% if painter %}
                 <dt>Painter</dt>
-                <dd>{{ painter }}{# Indian, Punjab #}</dd>
+                <dd>{{ painter|safe }}{# Indian, Punjab #}</dd>
                 {% endif %}
               </dl>
-              <div id="manuscript-details-body-notes" >{{ notes }}{#
-                <p>
+              <div id="manuscript-details-body-notes" >{{ notes|safe }}
+              {% comment %}
+               <p>
 					Rustam goes into the steppe to choose himself a horse. After observing and rejecting several others he captures a wild colt, Rakhsh.
 				</p>
-				#}
+			{% endcomment %}
               </div>
               <h3 class="wide-notes">Location In Editions</h3>
               <div id="big-manuscript-details-table">
@@ -104,38 +105,38 @@
                   <tbody>
                     <tr class="even">
                       <th>Chapter</th>
-                      <td>{{ chapter.ChapterName }}{# Dara son of Darab (14 years) #}</td>
-                      <td>{{ chapter_b }}{# Dara son of Darab (453) #}</td>
-                      <td>{{ chapter_k }}{# Dara son of Darab (459) #}</td>
-                      <td>{{ chapter_ds }}{# Dara son of Darab (1485) #}</td>
+                      <td>{{ chapter.ChapterName|default_if_none:"&#160;" }}{# Dara son of Darab (14 years) #}</td>
+                      <td>{{ chapter_b|default_if_none:"&#160;" }}{# Dara son of Darab (453) #}</td>
+                      <td>{{ chapter_k|default_if_none:"&#160;" }}{# Dara son of Darab (459) #}</td>
+                      <td>{{ chapter_ds|default_if_none:"&#160;" }}{# Dara son of Darab (1485) #}</td>
                     </tr>
                     <tr>
                       <th>First Line</th>
-                      <td>{{ FirstLineM }}{# 318 #}</td>
-                      <td>{{ FirstLineB }}{# 313 #}</td>
-                      <td>{{ FirstLineK }}{# &#160; #}</td>
-                      <td>{{ FirstLineDS }}{# &#160; #}</td>
+                      <td>{{ FirstLineM|default_if_none:"&#160;" }}{# 318 #}</td>
+                      <td>{{ FirstLineB|default_if_none:"&#160;" }}{# 313 #}</td>
+                      <td>{{ FirstLineK|default_if_none:"&#160;" }}{# &#160; #}</td>
+                      <td>{{ FirstLineDS|default_if_none:"&#160;" }}{# &#160; #}</td>
                     </tr>
                     <tr class="even">
                       <th>Break Line Before</th>
-                      <td>{{ BreakLineMbefore }}{# 333 #}</td>
-                      <td>{{ BreakLineBbefore }}{# 328 #}</td>
-                      <td>{{ BreakLineKbefore }}{# &#160; #}</td>
-                      <td>{{ BreakLineDSbefore }}{# &#160; #}</td>
+                      <td>{{ BreakLineMbefore|default_if_none:"&#160;" }}{# 333 #}</td>
+                      <td>{{ BreakLineBbefore|default_if_none:"&#160;" }}{# 328 #}</td>
+                      <td>{{ BreakLineKbefore|default_if_none:"&#160;" }}{# &#160; #}</td>
+                      <td>{{ BreakLineDSbefore|default_if_none:"&#160;" }}{# &#160; #}</td>
                     </tr>
                     <tr>
                       <th>Break Line After</th>
-                      <td>{{ BreakLineMafter }}{# &#160; #}</td>
-                      <td>{{ BreakLineBafter }}{# &#160; #}</td>
-                      <td>{{ BreakLineKafter }}{# &#160; #}</td>
-                      <td>{{ BreakLineDSafter }}{# &#160; #}</td>
+                      <td>{{ BreakLineMafter|default_if_none:"&#160;" }}{# &#160; #}</td>
+                      <td>{{ BreakLineBafter|default_if_none:"&#160;" }}{# &#160; #}</td>
+                      <td>{{ BreakLineKafter|default_if_none:"&#160;" }}{# &#160; #}</td>
+                      <td>{{ BreakLineDSafter|default_if_none:"&#160;" }}{# &#160; #}</td>
                     </tr>
                     <tr class="even">
                       <th>Last Line</th>
-                      <td>{{ LastLineM }}{# 333 #}</td>
-                      <td>{{ LastLineB }}{# 328 #}</td>
-                      <td>{{ LastLineK }}{# &#160; #}</td>
-                      <td>{{ LastLineDS }}{# &#160; #}</td>
+                      <td>{{ LastLineM|default_if_none:"&#160;" }}{# 333 #}</td>
+                      <td>{{ LastLineB|default_if_none:"&#160;" }}{# 328 #}</td>
+                      <td>{{ LastLineK|default_if_none:"&#160;" }}{# &#160; #}</td>
+                      <td>{{ LastLineDS|default_if_none:"&#160;" }}{# &#160; #}</td>
                     </tr>
                   </tbody>
                 </table>

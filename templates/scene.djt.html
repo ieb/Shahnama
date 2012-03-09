@@ -108,35 +108,35 @@
 	              <tbody>
 	                <tr class="even">
 	                  <th>Volume</th>
-	                  <td>{{ MohlVolume }}{# Dara son of Darab (14 years) #}</td>
-	                  <td>{{ BertelsVolume }}{# Dara son of Darab (453) #}</td>
-	                  <td>{{ KVolume }}{# Dara son of Darab (459) #}</td>
-	                  <td>{{ MTVolume }}{# Dara son of Darab (1485) #}</td>
-	                  <td>{{ WarnerVolume }}{# Dara son of Darab (1485) #}</td>
+	                  <td>{{ MohlVolume|default_if_none:"&#160;" }}{# Dara son of Darab (14 years) #}</td>
+	                  <td>{{ BertelsVolume|default_if_none:"&#160;" }}{# Dara son of Darab (453) #}</td>
+	                  <td>{{ KVolume|default_if_none:"&#160;" }}{# Dara son of Darab (459) #}</td>
+	                  <td>{{ MTVolume|default_if_none:"&#160;" }}{# Dara son of Darab (1485) #}</td>
+	                  <td>{{ WarnerVolume|default_if_none:"&#160;" }}{# Dara son of Darab (1485) #}</td>
 	                </tr>
 	                <tr>
 	                  <th>Page</th>
-	                  <td>{{ MohlPage }}{# 318 #}</td>
-	                  <td>{{ BertelsPage }}{# 313 #}</td>
-	                  <td>{{ KPage }}{# &#160; #}</td>
-	                  <td>{{ MTPage }}{# &#160; #}</td>
-	                  <td>{{ WarnerPage }}{# &#160; #}</td>
+	                  <td>{{ MohlPage|default_if_none:"&#160;" }}{# 318 #}</td>
+	                  <td>{{ BertelsPage|default_if_none:"&#160;" }}{# 313 #}</td>
+	                  <td>{{ KPage|default_if_none:"&#160;" }}{# &#160; #}</td>
+	                  <td>{{ MTPage|default_if_none:"&#160;" }}{# &#160; #}</td>
+	                  <td>{{ WarnerPage|default_if_none:"&#160;" }}{# &#160; #}</td>
 	                </tr>
 	                <tr class="even">
 	                  <th>Verse Start</th>
-	                  <td>{{ MohlStart }}{# 333 #}</td>
-	                  <td>{{ BertelsStart }}{# 328 #}</td>
-	                  <td>{{ KStart }}{# &#160; #}</td>
-	                  <td>{{ MTStart }}{# &#160; #}</td>
-	                  <td>{{ WarnerStart }}{# &#160; #}</td>
+	                  <td>{{ MohlStart|default_if_none:"&#160;" }}{# 333 #}</td>
+	                  <td>{{ BertelsStart|default_if_none:"&#160;" }}{# 328 #}</td>
+	                  <td>{{ KStart|default_if_none:"&#160;" }}{# &#160; #}</td>
+	                  <td>{{ MTStart|default_if_none:"&#160;" }}{# &#160; #}</td>
+	                  <td>{{ WarnerStart|default_if_none:"&#160;" }}{# &#160; #}</td>
 	                </tr>
 	                <tr>
 	                  <th>Verse End</th>
-	                  <td>{{ MohlEnd }}{# &#160; #}</td>
-	                  <td>{{ BertelsEnd }}{# &#160; #}</td>
-	                  <td>{{ KEnd }}{# &#160; #}</td>
-	                  <td>{{ MTEnd }}{# &#160; #}</td>
-	                  <td>{{ WarnerEnd }}{# &#160; #}</td>
+	                  <td>{{ MohlEnd|default_if_none:"&#160;" }}{# &#160; #}</td>
+	                  <td>{{ BertelsEnd|default_if_none:"&#160;" }}{# &#160; #}</td>
+	                  <td>{{ KEnd|default_if_none:"&#160;" }}{# &#160; #}</td>
+	                  <td>{{ MTEnd|default_if_none:"&#160;" }}{# &#160; #}</td>
+	                  <td>{{ WarnerEnd|default_if_none:"&#160;" }}{# &#160; #}</td>
 	                </tr>
 	              </tbody>
 	            </table>
