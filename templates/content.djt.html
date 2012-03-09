@@ -14,7 +14,7 @@
               {% for page in pages %}
                 <li>
                     <h3>
-                        <a href="/page/{{ page.meta.id }}">
+                        <a href="{% url page page.meta.id %}">
                             {% if page.pageimages.thumbnail_crop %}
                             <img src="{{ page.pageimages.thumbnail_crop }}"  width="96" height="70"/>
                             {% endif %}
@@ -38,8 +38,8 @@
             The Collection
             <h2>The Collection</h2>
             <ul>
-              <li><a href="/country/">Find by location</a></li>
-              <li><a href="/scene/">Find by scene</a></li>
+              <li><a href="{% url country '' %}">Find by location</a></li>
+              <li><a href="{% url scene '' %}">Find by scene</a></li>
               <li><a href="http://shahnama.caret.cam.ac.uk/new/jnama/bibliography">Bibliography</a></li>
               <!--
               <li><a href="#">Find a Library/Museum</a></li>
@@ -61,7 +61,7 @@
     <div>
        {{ page.text|safe }}
     </div>
-    <a href="/page/{{ page.id }}_edit">edit</a>
+    <a href="{% url page-edit page.id %}">edit</a>
   </div>
 {% endblock %}
 
