@@ -152,7 +152,7 @@ LOGGING = {
 # This is the location of the JSON data dumped from the main database
 SOURCE_DATA = '/Users/ieb/Caret/shahnama/sh2/sh2dj/sourcedata'
 PAINTINGS_URL = "http://shahnama-test.caret.cam.ac.uk/paintings"
-ILLUSTRATION_URL = "http://shahnama-test.caret.cam.ac.uk/paintings/Paintings"
+ILLUSTRATION_URL = "http://shahnama-test.caret.cam.ac.uk/paintings/Painting"
 LOCATION_URL = "http://www9.caret.cam.ac.uk/images-qa/70/Location"
 MANUSCRIPT_URL = "http://shahnama-test.caret.cam.ac.uk/paintings"
 #PAINTINGS_URL = 'http://www9.caret.cam.ac.uk/images-qa/70/'

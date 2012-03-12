@@ -1,9 +1,9 @@
 <container>
 	<text left="ucfirst" right="punc">
 		<join separator=", ">
-			<value key="MsTypeSerial" authority="ms-type"/>
+			<value key="MsTypeSerial" type="ms-type"/>
 			<text right="lc">
-				<value key="MsStatusSerial" authority="ms-status"/>
+				<value key="MsStatusSerial" type="ms-status"/>
 			</text>
 			<if key="EstimatedNumberFolios">
 				estimated <value key="EstimatedNumberFolios"/> total folios
@@ -36,9 +36,9 @@
 				</if>
 			</if>
 			<container>
-				<value key="LanguageSerial" authority="ms-lang"/>
+				<value key="LanguageSerial" type="ms-lang"/>
 				<if key="MsAuthorSerial">
-					(<value key="MsAuthorSerial" authority="ms-author"/>)
+					(<value key="MsAuthorSerial" type="ms-author"/>)
 				</if>
 			</container>
 			<if key="TotalNumber">

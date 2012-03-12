@@ -14,6 +14,8 @@ from ShahnamaDJ.views.stringbuilder import StringPattern
 from django.template.context import RequestContext
 import json
 from ShahnamaDJ.content.models import ContentMeta
+import logging
+import traceback
 
 MANUSCRIPT_URL, LOCATION_URL, ILLUSTRATION_URL, PAINTINGS_URL, SERVER_ROOT_URL = (
         settings.MANUSCRIPT_URL, 
@@ -103,9 +105,10 @@ class AbstractView(object):
         self.loadJson()
         if map is None:
             map = self.json
-        if name in map and map[name] is not None:
+        try:
             return map[name]
-        return default
+        except:
+            return default
 
     class Meta:
         abstract = True
@@ -207,7 +210,7 @@ class AuthorityView(AbstractView):
     def loadModel(self):
         if self.model is None and self.id is not None and self.id != '':
             try:
-                self.model = Authority.objects.get(name=self.name, id=self.id)
+                self.model = Authority.objects.get(name=self.name, key=self.id)
             except:
                 self.model = None
             
@@ -219,6 +222,9 @@ class AuthorityView(AbstractView):
     def asJson(self):
         self.loadJson()
         return self.json;
+    
+    def getValue(self):
+        return self.getSafeProperty("value")
 
 class IllustrationView(AbstractView):
     
@@ -249,18 +255,18 @@ class IllustrationView(AbstractView):
                     'url': "%s/illustration/%s" % (SERVER_ROOT_URL,self.id),
                     'form': form_tmpl.apply(self.request,self.json),
                     'chapter' : {},
-                    'work': AuthorityView(self.request, 'ms-title', self.getSafeProperty('TitleSerial')).asJson(),
-                    'chapter-k': AuthorityView(self.request, 'chapter-k', self.getSafeProperty('ChapterSerialK')).asJson(),
-                    'chapter-b': AuthorityView(self.request, 'chapter-b', self.getSafeProperty('ChapterSerialB')).asJson(),
-                    'chapter-ds': AuthorityView(self.request, 'chapter-ds', self.getSafeProperty('ChapterSerialDS')).asJson(),
+                    'work': AuthorityView(self.request, 'ms-title', self.getSafeProperty('TitleSerial')).getValue(),
+                    'chapter-k': AuthorityView(self.request, 'chapter-k', self.getSafeProperty('ChapterSerialK')).getValue(),
+                    'chapter-b': AuthorityView(self.request, 'chapter-b', self.getSafeProperty('ChapterSerialB')).getValue(),
+                    'chapter-ds': AuthorityView(self.request, 'chapter-ds', self.getSafeProperty('ChapterSerialDS')).getValue(),
                     'date': "%s (%s)" % (Hijri.date(self.getSafeProperty('HijriDate')),Gregorian.date(self.getSafeProperty('GregorianDate'))),
-                    'status': AuthorityView(self.request, 'record-status', self.getSafeProperty('CompletionStatus')).asJson(),
+                    'status': AuthorityView(self.request, 'record-status', self.getSafeProperty('CompletionStatus')).getValue(),
                     'up_date': recordutils.format_date(self.getSafeProperty('DateUpdated')),
                     'painter': painter_tmpl.apply(self.request,self.json),
                     'references': ReferenceView.refs_tmpl(self.request,self.json,refmap),
                     'notes': recordutils.wash_notes(self.getSafeProperty('NotesVisible')),
                     'folio': folio_tmpl.apply(self.request,self.json),
-                    'format': AuthorityView(self.request, 'ill-format', self.getSafeProperty('FormatSerial')).asJson(),
+                    'format': AuthorityView(self.request, 'ill-format', self.getSafeProperty('FormatSerial')).getValue(),
                     'prev-url': "%s/illustration/%s" % (SERVER_ROOT_URL,self.json['chain-prev-folios-in-ms']) if 'chain-prev-folios-in-ms' in self.json else '',
                     'next-url': "%s/illustration/%s" % (SERVER_ROOT_URL,self.json['chain-next-folios-in-ms']) if 'chain-next-folios-in-ms' in self.json else '',
                 }
@@ -344,7 +350,7 @@ class LocationView(AbstractView):
                     gallery.galleryData = [GalleryView.entry(photo,'#',self.getSafeProperty('FullLocationName'),'View of location, go forward for manuscripts','','',True)]
                     gallery.galleryData.extend([ ManuscriptView(self.request, x).gallery() for x in self.model.manuscript_set.all()])
                 extra = {
-                     'country': AuthorityView(self.request, 'country', self.getSafeProperty('Country')).asJson(),
+                     'country': AuthorityView(self.request, 'country', self.getSafeProperty('Country')).getValue(),
                      'gallery': gallery.emit(),
                      'up_date': format_date(self.getSafeProperty('DateUpdated')),
                      'contact': contact_tmpl.apply(self.request,self.json),
@@ -487,7 +493,7 @@ class ManuscriptView(AbstractView):
                         'date': "%s (%s)" % (Hijri.date(self.getSafeProperty('HijriDate')), Gregorian.date(self.getSafeProperty('GregorianDate'))),
                         'references': ReferenceView.refs_tmpl(self.request, self.json, refmap),
                         'notes': wash_notes(self.getSafeProperty('NotesVisible')),
-                        'status': JsonModel.safe_to_json(Authority.objects.get(name='record-status', id=self.getSafeProperty('CompletionStatus'))),
+                        'status': JsonModel.safe_to_json(Authority.objects.get(name='record-status', key=self.getSafeProperty('CompletionStatus'))),
                         'up_date': format_date(self.getSafeProperty('DateUpdated')),
                         'canon-image': self._canon_image(self.request, self.json),
                         'location_text': locationView.text(),
@@ -600,24 +606,33 @@ class ReferenceView(AbstractView):
     
     def loadModel(self):
         if self.model is None and self.id is not None and self.id != '':
-            self.model = Reference.objects.get(id = self.id)
+            try:
+                self.model = Reference.objects.get(id = self.id)
+            except Reference.DoesNotExist:
+                logging.error("No refernce with id %s " % self.id)
 
     def sentence_summary(self):
         try:
             self.loadJson()
-            self.json['bib-class'] = AuthorityView(self.request, 'bib-class', self.json['biblioClassificationID']).asJson()
+            self.json['bib-class'] = AuthorityView(self.request, 'bib-class', self.json['biblioClassificationID']).getValue()
             return citation_tmpl.apply(self.request,self.json)
         except:
+            logging.error(traceback.format_exc())
+            logging.error("FAILED")
             return citation_tmpl.apply(self.request,{})
 
     @staticmethod
     def refs_tmpl(request,data, refmap):
         refs = {}
         for (name,title) in refmap.iteritems():
-            if data[name] is not None and str(data[name]).strip() != '':
-                if not data[name] in refs:
-                    refs[data[name]] = set()
-                refs[data[name]].add(title)
+            try:
+                if data[name] is not None and str(data[name]).strip() != '':
+                    if not data[name] in refs:
+                        refs[data[name]] = set()
+                    refs[data[name]].add(title)
+            except KeyError:
+                logging.error("Missed %s " % name)
+                pass
         refs_tmpl = []
         for (ref,kd) in refs.iteritems():
             title = recordutils.comma_ampersand_list(sorted(kd))

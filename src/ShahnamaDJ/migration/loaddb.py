@@ -15,6 +15,8 @@ from django.db.backends.sqlite3.base import IntegrityError
 from django.views.decorators.http import condition
 from django.conf import settings
 import time
+import traceback
+import logging
 
 '''
 This class implements an iterator that iterates through the messages produced by
@@ -41,21 +43,19 @@ class DBLoader(object):
         encoding = toload["encoding"]
         loader = toload["loader"]
         try:
-            data = json.load(file("%s/%s" % (path,key)),encoding=encoding)
-            dataKey = loader.getKeyFromJson(data)
-            if dataKey is None:
-                dataKey = key
-            obj = loader.objects.create(id=dataKey, key=dataKey, data = json.dumps(data))
+            obj = loader.createFromJson(json.load(file("%s/%s" % (path,key)),encoding=encoding), key)
             obj.save()
             return self._log("Pass 1 %s of %s " % (i,len(self.filesToLoad)),True)
         except IntegrityError as e:
             return self._log("Pass 1 %s of %s Failed Loading data from %s cause %s" % (i, len(self.filesToLoad), path, e.message))
         except Exception as detail:
+            logging.error(traceback.format_exc())
             return self._log("Pass 1 %s of %s Failed Loading data from %s cause %s" % (i, len(self.filesToLoad), path, detail))
 
 
     def _buildRelationship(self, i):
         objectType = self.objectsToRelate[i]
+        logging.error("WOrking on %s " % objectType)
         for dbobj in objectType.objects.all():
             dbobj.clearErrors()
             dbobj.buildRelationships()

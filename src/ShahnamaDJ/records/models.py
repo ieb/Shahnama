@@ -57,11 +57,12 @@ tables = {
 
 
 '''
+import logging
 
 
 class JsonModel(models.Model):
     id = models.IntegerField(primary_key=True)
-    key = models.TextField(max_length=32, null=True, blank=True)
+    key = models.CharField(max_length=32, null=True, blank=True)
     data = models.TextField()
     errors = []
 
@@ -92,6 +93,8 @@ class JsonModel(models.Model):
         if obj:
             return obj.to_json()
         return None
+    
+    
 
     def getErrors(self):
         return self.errors
@@ -125,6 +128,13 @@ class Chapter(JsonModel):
     def buildRelationships(self):
         json = self.to_json()
         self.name = self._safeGetProperty(json, "ChapterName")
+
+    @staticmethod
+    def createFromJson(data, key):
+        dataKey = Chapter.getKeyFromJson(data)
+        if dataKey is None:
+            dataKey = key
+        return Chapter.objects.create(id=dataKey, key=dataKey, data = json.dumps(data))
 
     class Meta:
         ordering = ['name']
@@ -163,6 +173,13 @@ class Reference(JsonModel):
     def getKeyFromJson(dictObject):
         return dictObject["ReferenceSerial"]
 
+    @staticmethod
+    def createFromJson(data, key):
+        dataKey = Reference.getKeyFromJson(data)
+        if dataKey is None:
+            dataKey = key
+        return Reference.objects.create(id=dataKey, key=dataKey, data = json.dumps(data))
+
     def buildRelationships(self):
         json = self.to_json()
         self.name = self._safeGetProperty(json, "UniformTitle")
@@ -188,6 +205,13 @@ class Country(JsonModel):
     @staticmethod
     def getKeyFromJson(dictObject):
         return dictObject["serial"]
+    
+    @staticmethod
+    def createFromJson(data, key):
+        dataKey = Country.getKeyFromJson(data)
+        if dataKey is None:
+            dataKey = key
+        return Country.objects.create(id=dataKey, key=dataKey, data = json.dumps(data))
 
     def buildRelationships(self):
         json = self.to_json()
@@ -231,6 +255,13 @@ class Location(JsonModel):
     @staticmethod
     def getKeyFromJson(dictObject):
         return dictObject["LocationSerial"]
+    
+    @staticmethod
+    def createFromJson(data, key):
+        dataKey = Location.getKeyFromJson(data)
+        if dataKey is None:
+            dataKey = key
+        return Location.objects.create(id=dataKey, key=dataKey, data = json.dumps(data))
 
     def buildRelationships(self):
         json = self.to_json()
@@ -313,6 +344,13 @@ class Manuscript(JsonModel):
     @staticmethod
     def getKeyFromJson(dictObject):
         return dictObject["ManuscriptSerial"]
+    
+    @staticmethod
+    def createFromJson(data, key):
+        dataKey = Manuscript.getKeyFromJson(data)
+        if dataKey is None:
+            dataKey = key
+        return Manuscript.objects.create(id=dataKey, key=dataKey, data = json.dumps(data))
 
     def buildRelationships(self):
         json = self.to_json()
@@ -377,6 +415,13 @@ class Scene(JsonModel):
     @staticmethod
     def getKeyFromJson(dictObject):
         return dictObject['SceneSerial']
+
+    @staticmethod
+    def createFromJson(data, key):
+        dataKey = Scene.getKeyFromJson(data)
+        if dataKey is None:
+            dataKey = key
+        return Scene.objects.create(id=dataKey, key=dataKey, data = json.dumps(data))
 
     def buildRelationships(self):
         json = self.to_json()
@@ -461,6 +506,13 @@ class Illustration(JsonModel):
     def getKeyFromJson(dictObject):
         return dictObject['IllustrationSerial']
 
+    @staticmethod
+    def createFromJson(data, key):
+        dataKey = Illustration.getKeyFromJson(data)
+        if dataKey is None:
+            dataKey = key
+        return Illustration.objects.create(id=dataKey, key=dataKey, data = json.dumps(data))
+
     def buildRelationships(self):
         json = self.to_json()
 
@@ -482,20 +534,48 @@ class Authority(models.Model):
     "value": "Zav-i Tahmasp (156)"
     }
     '''
-    name = models.CharField(max_length=64, null=True, blank=True)
-    order = models.IntegerField(default=0)
-    authorityType = models.CharField(max_length=16, null=True, blank=True)
-    key = models.CharField(max_length=64, null=True, blank=True)
+    namekey = models.CharField(max_length=64, unique=True)
+    name = models.CharField(max_length=32, db_index=True)
+    key = models.IntegerField(db_index=True)
+    
+    order = models.CharField(max_length=10,default="0")
+    data = models.TextField()
+    errors = []
 
     @staticmethod
     def getKeyFromJson(dictObject):
         return dictObject['serial']
 
+
+    @staticmethod
+    def createFromJson(data, key):
+        dataKey = Authority.getKeyFromJson(data)
+        type = data['type']
+        if dataKey is None:
+            dataKey = key
+            namekey = key
+        else:
+            namekey = "%s:%s" % (type, dataKey)
+        logging.error("Creating %s %s %s " % (namekey, dataKey, type))
+        return Authority.objects.create(namekey=namekey, key=dataKey, name=type, data=json.dumps(data))
+
+    def _safeGetProperty(self, json, valueName, default = None):
+        if valueName in json:
+            return json[valueName]
+        return default
+
     def buildRelationships(self):
         json = self.to_json()
-        self.name = self._safeGetProperty(json, "value")
-        self.authorityType = self._safeGetProperty(json, "type")
-        self.order = self._safeGetProperty(json, "order", default = 0)
+        self.order = self._safeGetProperty(json, "order", default = "0")
+        
+    def to_json(self):
+        return json.loads(self.data)
+
+    def getErrors(self):
+        return self.errors
+
+    def clearErrors(self):
+        self.errors = []
 
 
     class Meta:
