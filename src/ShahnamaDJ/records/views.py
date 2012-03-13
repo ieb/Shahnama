@@ -318,7 +318,7 @@ class IllustrationView(AbstractView):
     def gallery(self,key=None):
         self.loadJson()
         return GalleryView.entry(self.painting(),
-                                 self.getSafeProperty('url'),
+                                 "%s/illustration/%s" % (SERVER_ROOT_URL,self.id),
                                  self.getSafeProperty('TitleEnglish'),
                                  self.getSafeProperty('FolioNumber'),
                                  ManuscriptView(self.request,model=self.model.manuscript)._text(),
