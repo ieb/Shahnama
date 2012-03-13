@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.conf import settings
 from ShahnamaDJ.records.views import chapterView, countryView, illustrationView,\
     locationView, manuscriptView, sceneView
-from ShahnamaDJ.migration.loaddb import loadDb
+from ShahnamaDJ.migration.loaddb import loadDb, loadDbTest
 from ShahnamaDJ.loaddb import RECORDS_SOURCE_DATA, CONTENT_SOURCE_DATA
 from ShahnamaDJ.content.views import pageView, pageListView, homeView, pageEdit,\
     pageCreate, pageFramedImageView, pageTrimImageView
@@ -24,6 +24,7 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Load the database with information from a set of json files.
+    url(r'^admin/loadDbTest', loadDbTest, name='loadDbTest'),
     url(r'^admin/loadDb', loadDb,  {'dataSource' :SOURCE_DATA, 'dataStructure':RECORDS_SOURCE_DATA }, name='loadDb'),
     url(r'^admin/loadEvents', loadDb, {'dataSource':SOURCE_DATA, 'dataStructure':CONTENT_SOURCE_DATA }, name='loadEvents'),
     url(r'^admin/pages', pageListView),

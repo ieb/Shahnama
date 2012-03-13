@@ -186,3 +186,24 @@ def loadDb(request, dataSource, dataStructure):
         return render_to_response("loaddb_form.djt.html", { 'SOURCE_DATA' : settings.SOURCE_DATA}, context_instance=requestContext)
 
 
+
+def renderDbLoad_generatorTest(context):
+    '''
+    Only here to test the layout of the db load screens, nothing more.
+    @param context:
+    '''
+    yield render_to_string("loaddb_pre.djt.html", context )
+    for i in range(0,1000):
+        yield render_to_string("loaddb_message.djt.html", { 'message' : "sdflsaflkaj fsahf lkasjhfhl aksfjfhl sakfjh safdkjhsfdkj hsadf kjshdfksjahdfh safjkdhs akfdhj asfdkjhs dfkjhasfkjshfdk sfskdjdsdsafjkhsk fshjafld kjashfd lksaflskdfh sdkjhjhsdak jk adfsalfkjh slkfdh skfdjhsakdfh askdfhjkfs kdfhj sdkfhsdkhfs dkahkj%s" % i })
+    yield render_to_string("loaddb_post.djt.html", { 'SOURCE_DATA' : settings.SOURCE_DATA})
+
+
+@login_required
+@permission_required('records.loaddb')
+@condition(etag_func=None)
+def loadDbTest(request):
+        c = {}
+        c.update(csrf(request))
+        logging.error("performing load")
+        return  HttpResponse(renderDbLoad_generatorTest(c), content_type="text/html")
+
