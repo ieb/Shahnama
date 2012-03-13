@@ -487,14 +487,14 @@ class ManuscriptView(AbstractView):
                         'AttributionDate': 'Date',
                     }
                     gallery = GalleryView()
-                    locationView = LocationView(self.request, self.model.location)
+                    locationView = LocationView(self.request, model=self.model.location)
                     loc = { 'Country': '', 'country': '' }
                     if not quick:
                         if 'Colophon' in self.json  and self.json['Colophon'] is not None:
-                            gallery.galleryData.append(GalleryView.entry(self._image_url(self.request, self.json, 'Colophon'), '#', 'Colophon', self.json['ColophonNumber'], '', ''))
+                            gallery.galleryData.append(GalleryView.entry(self._image_url('Colophon'), '#', 'Colophon', self.json['ColophonNumber'], '', ''))
                         if 'SamplePage' in self.json and self.json['SamplePage'] is not None:
-                            gallery.galleryData.append(GalleryView.entry(self._image_url(self.request, self.json, 'SamplePage'), '#', 'Sample page from this manuscript', '', '', ''))
-                        gallery.extend([ IllustrationView(self.request, model=x) for x in self.model.illustration_set.all()])
+                            gallery.galleryData.append(GalleryView.entry(self._image_url('SamplePage'), '#', 'Sample page from this manuscript', '', '', ''))
+                        gallery.galleryData.extend([ IllustrationView(self.request, model=x).gallery() for x in self.model.illustration_set.all()])
                         loc = locationView.summary(True)
                     extra = {
                         'gallery': gallery.emit(),
@@ -502,17 +502,17 @@ class ManuscriptView(AbstractView):
                         'text': text_tmpl.apply(self.request, self.json),
                         'pages': pages_tmpl.apply(self.request, self.json),
                         'state': state_tmpl.apply(self.request, self.json),
-                        'origin': origin_tmpl.apply(self.frequest, self.json),
+                        'origin': origin_tmpl.apply(self.request, self.json),
                         'date': "%s (%s)" % (Hijri.date(self.getSafeProperty('HijriDate')), Gregorian.date(self.getSafeProperty('GregorianDate'))),
                         'references': ReferenceView.refs_tmpl(self.request, self.json, refmap),
                         'notes': wash_notes(self.getSafeProperty('NotesVisible')),
-                        'status': JsonModel.safe_to_json(Authority.objects.get(name='record-status', key=self.getSafeProperty('CompletionStatus'))),
+                        'status': AuthorityView(self.request, 'record-status', self.getSafeProperty('CompletionStatus')).getValue(),
                         'up_date': format_date(self.getSafeProperty('DateUpdated')),
-                        'canon-image': self._canon_image(self.request, self.json),
+                        'canon-image': self._canon_image(),
                         'location_text': locationView.text(),
                         'location_url': '%s/location/%s' % (SERVER_ROOT_URL, self.getSafeProperty('LocationSerial')),
-                        'country': self.getSafeProperty('country', map=loc),
-                        'country_url': '%s/country/%s' % (SERVER_ROOT_URL, self.getSafeProperty('country', map=loc)),
+                        'country': self.getSafeProperty('country', map = loc  ),
+                        'country_url': '%s/country/%s' % (SERVER_ROOT_URL, locationView.getSafeProperty('Country')),
                         'prev_url': "%s/manuscript/%s" % (SERVER_ROOT_URL, self.json['chain-prev-date']) if 'chain-prev-date' in self.json else '',
                         'next_url': "%s/manuscript/%s" % (SERVER_ROOT_URL, self.json['chain-next-date']) if 'chain-next-date' in self.json else '',
                     }
@@ -520,6 +520,7 @@ class ManuscriptView(AbstractView):
                 else:
                     self.summaryMap = {}
             except:
+                logging.error("Failed to generate summary map %s " % traceback.format_exc())
                 self.summaryMap = {}
         return self.summaryMap
     

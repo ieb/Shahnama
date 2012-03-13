@@ -71,18 +71,18 @@
             mss:
             {% if prev_url %} 
             <span title=".ui-icon-seek-next" class="grey-box ui-corner-all inline-block">
-              <a class="icon-prev" href="{{ prev_url }}" href="#"/>
+              <a class="icon-prev" href="{{ prev_url }}" ></a>
             </span>
             {% endif %} 
             {% if next_url %} 
             <span title=".ui-icon-seek-next" class="grey-box ui-corner-all inline-block">
-              <a class="icon-next" href="{{ next_url }}" href="#"/>
+              <a class="icon-next" href="{{ next_url }}" ></a>
             </span>
             {% endif %} 
 	    </div>
 	    <div id="manuscript-block"><b>{{ AccessionNumber }}{# Ryl Pers 910 #}</b>,
 			    <a href="{{ location_url }}" href="#">{{ location_text }}{# Manchester, John Rylands University Library of Manchester #}</a>,
-			    <a href="{{ country_url }}" >{{ location_text }}{# UK #}</a>.
+			    <a href="{{ country_url }}" >{{ country }}{# UK #}</a>.
 	    </div>
 	    <div id="manuscript-details">
 	      <div class="manuscript-details-list">
@@ -110,11 +110,12 @@
 	          <dd>{{ Ownership }}{# British Library #}</dd>
               {% endif %}
 	        </dl>
-	        <div id="manuscript-details-body-notes">{{ notes }}{#
+	        <div id="manuscript-details-body-notes">{{ notes|safe }}
+	        {% comment %}
 	          <p>
 	                  Eighteenth-century Indian binding of claret-coloured leather with white medallions, pendants, corner pieces and border panels inlaid and embossed. Doublures with medallions and pendants painted in silver. Modern slip-case of scarlet morocco.
 			  </p>
-			  #}
+			 {% endcomment %}
 	        </div>
 	        <div id="manuscript-details-references">
               {% if references %}
