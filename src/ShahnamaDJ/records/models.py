@@ -58,6 +58,8 @@ tables = {
 
 '''
 import logging
+from ShahnamaDJ.datatypes.gregorian import Gregorian
+import re
 
 
 class JsonModel(models.Model):
@@ -340,6 +342,8 @@ class Manuscript(JsonModel):
     '''
     location = models.ForeignKey(Location,  blank=True, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=64, null=True, blank=True)
+    dateSort = models.IntegerField(null=True)
+    locationid = models.IntegerField(null=True)
 
     @staticmethod
     def getKeyFromJson(dictObject):
@@ -356,6 +360,40 @@ class Manuscript(JsonModel):
         json = self.to_json()
         self.name = self._safeGetProperty(json, "FullLocationName")# this is not right, but there is nothing else.
         self.location = self._getReferencedObject(self.location, Location, json, "LocationSerial")
+        self.dateSort = self._gregorian_date_order(self._safeGetProperty(json, "GregorianDate"))
+        if self.location is not None:
+            self.locationid = self.location.id  # this means that we dont have to follow the FK when ordering
+        
+        
+    @staticmethod
+    def buildOrderedChain():
+        # sort by location id and then 
+        q = Manuscript.objects.all().order_by("locationid","dateSort")
+        mwindow = []
+        i = 0
+        for m in q:
+            # maintain a window 3 wide on the result set
+            mwindow.append(m)
+            if len(mwindow) > 3:
+                mwindow.pop(0)
+            if len(mwindow) == 3:
+                # work on the element in the center of the result set
+                jsondata = mwindow[1].to_json()
+                if mwindow[0].locationid == mwindow[1].locationid:
+                    jsondata['chain-prev-date'] = mwindow[0].id
+                if mwindow[1].locationid == mwindow[2].locationid:
+                    jsondata['chain-next-date'] = mwindow[2].id
+                mwindow[1].data = json.dumps(jsondata)
+                mwindow[1].save()
+            i = i+1
+            if i%1000 == 0:
+                logging.error("Ordered Manuscript Record %s ", i)
+        
+    def _gregorian_date_order(self, d):
+        if d is None:
+            return None
+        return Gregorian.from_string(d).orderint()
+
 
     class Meta:
         ordering = ['name']
@@ -501,6 +539,11 @@ class Illustration(JsonModel):
     scene = models.ForeignKey(Scene,  blank=True, null=True, on_delete=models.SET_NULL)
     location = models.ForeignKey(Location, blank=True, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=64, null=True, blank=True)
+    folioSort = models.IntegerField(null=True)
+    manuscriptid = models.IntegerField(null=True)
+
+    foliosRE = re.compile(r"^([0-9]+)([vr]?)$")
+    
 
     @staticmethod
     def getKeyFromJson(dictObject):
@@ -520,7 +563,45 @@ class Illustration(JsonModel):
         self.manuscript = self._getReferencedObject(self.manuscript, Manuscript, json, 'ManuscriptSerial')
         self.scene = self._getReferencedObject(self.scene, Scene, json, 'SceneSerial')
         self.location = self._getReferencedObject(self.location, Location, json, 'LocationSerial')
+        self.folioSort = self._createFolioSortNum(self._safeGetProperty(json, "FolioNumber"))
+        if self.manuscript is not None:
+            self.manuscriptid = self.manuscript.id
+        
+    @staticmethod
+    def buildOrderedChain():
+        # sort by manuscriptid id and then by folio sort to group the records into chains.
+        # the end of a chain is marked by a change in manuscriptid 
+        q = Illustration.objects.all().order_by("manuscriptid","folioSort")
+        mwindow = []
+        i = 0
+        for m in q:
+            # maintain a window 3 wide on the result set
+            mwindow.append(m)
+            if len(mwindow) > 3:
+                mwindow.pop(0)
+            if len(mwindow) == 3:
+                # work on the element in the center of the result set
+                jsondata = mwindow[1].to_json()
+                if mwindow[0].manuscriptid == mwindow[1].manuscriptid:
+                    jsondata['chain-prev-folios-in-ms'] = mwindow[0].id
+                if mwindow[1].manuscriptid == mwindow[2].manuscriptid:
+                    jsondata['chain-next-folios-in-ms'] = mwindow[2].id
+                mwindow[1].data = json.dumps(jsondata)
+                mwindow[1].save()
+            i = i+1
+            if i%1000 == 0:
+                logging.error("Ordered Illustration Record %s ", i)
 
+    def _createFolioSortNum(self, k):
+        if k is None:
+            return None
+        m = Illustration.foliosRE.match(k)
+        if not m:
+            return None
+        val = int(m.group(1))*2
+        if m.group(2) == 'v':
+            val += 1
+        return val
 
     class Meta:
         ordering = ['name']
@@ -577,6 +658,9 @@ class Authority(models.Model):
     def clearErrors(self):
         self.errors = []
 
+    def getValue(self):
+        json = self.to_json()
+        return json['value']
 
     class Meta:
         ordering = ['order','name']

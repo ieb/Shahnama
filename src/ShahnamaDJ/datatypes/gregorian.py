@@ -1,4 +1,5 @@
 import re
+import logging
 
 re_century = re.compile(r"^([0-9][0-9]?)(st|nd|rd|th)$")
 re_year = re.compile(r"^[0-9]+$")
@@ -176,6 +177,57 @@ class Gregorian:
         elif self._s[0] == 'm':
             return (0,self._y,self._m if self._m else 99,self._d if self._d else 99)
         return (2,None,None,None)
+    
+    def orderint(self):
+        '''
+        Produces an int suitable for ordering the date
+        '''
+        t = 0
+        c = 0
+        m = 0
+        d = 0
+        
+        if self._s is None:
+            t = 1
+        elif self._s == '':
+            c = self._safeint(self._y)
+            m = self._convert_month_in(self._m) if type(self._m) != type(1) else self._m
+            d = self._safeint(self._d) if self._d else 32
+        elif self._s[0] == 'c':
+            c = self._safeint(self._y)*100
+            m = len(Gregorian.short_form)
+            d = 32
+        elif self._s[0:2] == 'hc':
+            c = self._safeint(self._y)
+            m = self._convert_month_in(self._m) if type(self._m) != type(1) else self._m
+            d = self._safeint(self._d) if self._d else 32
+        elif self._s[0] == 'y':
+            c = self._safeint(self._y)
+            m = self._convert_month_in(self._m) if type(self._m) != type(1) else self._m
+            d = self._safeint(self._d) if self._d else 32
+        elif self._s[0] == 'm':
+            c = self._safeint(self._y)
+            m = self._convert_month_in(self._m) if type(self._m) != type(1) else self._m
+            d = self._safeint(self._d) if self._d else 32
+        else:
+            t = 2
+        try:
+            if d is None:
+                d = 32 
+            if c is None:
+                c = 0
+            if m is None:
+                m = len(Gregorian.short_form)
+            return ((t*10000+c)*len(Gregorian.short_form)+m)*32+d
+        except:
+            logging.error(" %s %s %s %s [%s] [%s] " % (t,c,m,d, self._s, self.to_long_string()))
+            raise TypeError
+    
+    def _safeint(self,v):
+        try:
+            return int(v)
+        except:
+            return None
         
     @staticmethod
     def _th(x):

@@ -72,7 +72,7 @@ class StringPattern:
                 v = model[k]
             if v and 'authority' in node.attrib:
                 try:
-                    v = Authority.objects.get(name=node.attrib['authority'],key=v).data
+                    v = Authority.objects.get(name=node.attrib['authority'],key=v).getValue()
                 except:
                     pass
             return escape(unicode(v))

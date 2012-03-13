@@ -212,6 +212,7 @@ class AuthorityView(AbstractView):
             try:
                 self.model = Authority.objects.get(name=self.name, key=self.id)
             except:
+                logging.error(" Error Loaded Authority %s %s " % (self.name, self.id))
                 self.model = None
             
     def loadJson(self):
@@ -267,8 +268,8 @@ class IllustrationView(AbstractView):
                     'notes': recordutils.wash_notes(self.getSafeProperty('NotesVisible')),
                     'folio': folio_tmpl.apply(self.request,self.json),
                     'format': AuthorityView(self.request, 'ill-format', self.getSafeProperty('FormatSerial')).getValue(),
-                    'prev-url': "%s/illustration/%s" % (SERVER_ROOT_URL,self.json['chain-prev-folios-in-ms']) if 'chain-prev-folios-in-ms' in self.json else '',
-                    'next-url': "%s/illustration/%s" % (SERVER_ROOT_URL,self.json['chain-next-folios-in-ms']) if 'chain-next-folios-in-ms' in self.json else '',
+                    'prev_url': "%s/illustration/%s" % (SERVER_ROOT_URL,self.json['chain-prev-folios-in-ms']) if 'chain-prev-folios-in-ms' in self.json else '',
+                    'next_url': "%s/illustration/%s" % (SERVER_ROOT_URL,self.json['chain-next-folios-in-ms']) if 'chain-next-folios-in-ms' in self.json else '',
                 }
                 ''' 
                 Illustration does not have a chapter serial,
@@ -283,6 +284,7 @@ class IllustrationView(AbstractView):
                         location = LocationView(self.request, model=self.model.manuscript.location)
                         ms = manuscript.summary()
                         ls = location.summary()
+                        logging.error("Location %s " % ls)
                         extra['ms_name'] = self.getSafeProperty('AccessionNumber', map = ms)
                         extra['ms_url'] = "%s/manuscript/%s" % (SERVER_ROOT_URL,self.getSafeProperty('ManuscriptSerial', map = ms))
                         extra['loc_name'] = self.getSafeProperty('FullLocationName', map = ls)
@@ -298,6 +300,7 @@ class IllustrationView(AbstractView):
                         extra['ch_name'] = self.getSafeProperty('chapter_name', map = ss)
                         extra['ch_url'] = self.getSafeProperty('chapter_url', map = ss)
                 self.summaryMap = dict(self.json.items() + extra.items())
+                logging.error("Rendering form with %s " % json.dumps(self.summaryMap, indent=4))
             else:
                 self.summaryMap = {}
         return self.summaryMap
@@ -500,8 +503,8 @@ class ManuscriptView(AbstractView):
                         'location_url': '%s/location/%s' % (SERVER_ROOT_URL, self.getSafeProperty('LocationSerial')),
                         'country': self.getSafeProperty('country', map=loc),
                         'country_url': '%s/country/%s' % (SERVER_ROOT_URL, self.getSafeProperty('country', map=loc)),
-                        'prev-url': "%s/manuscript/%s" % (SERVER_ROOT_URL, self.json['chain-prev-date']) if 'chain-prev-date' in self.json else '',
-                        'next-url': "%s/manuscript/%s" % (SERVER_ROOT_URL, self.json['chain-next-date']) if 'chain-next-date' in self.json else '',
+                        'prev_url': "%s/manuscript/%s" % (SERVER_ROOT_URL, self.json['chain-prev-date']) if 'chain-prev-date' in self.json else '',
+                        'next_url': "%s/manuscript/%s" % (SERVER_ROOT_URL, self.json['chain-next-date']) if 'chain-next-date' in self.json else '',
                     }
                     self.summaryMap = dict(self.json.items() + extra.items())
                 else:

@@ -49,7 +49,6 @@ class DBLoader(object):
         except IntegrityError as e:
             return self._log("Pass 1 %s of %s Failed Loading data from %s cause %s" % (i, len(self.filesToLoad), path, e.message))
         except Exception as detail:
-            logging.error(traceback.format_exc())
             return self._log("Pass 1 %s of %s Failed Loading data from %s cause %s" % (i, len(self.filesToLoad), path, detail))
 
 
@@ -62,20 +61,36 @@ class DBLoader(object):
             dbobj.save()
             errors = dbobj.getErrors()
             for e in errors:
-                print "Added Errors %s " % e
+                logging.error("Added Errors %s " % e)
                 self.messages.append(self._log(e))
         return self._log("Pass 2 ........... Done %s of %s " % (i, len(self.objectsToRelate)))
+
+    def _buildOrderedChain(self, i):
+        objectType = self.objectsToChain[i]
+        if  hasattr(objectType,"buildOrderedChain"):
+            logging.error("Chain Ordering on %s " % objectType)
+            objectType.buildOrderedChain()
+        else:
+            logging.error("No Chain Ordering Required on %s " % objectType)
+        return self._log("Pass 3 ........... Done %s of %s " % (i, len(self.objectsToChain)))
+
 
     def _log(self, message, timedMessage = False):
         if timedMessage and (time.time() - self.lastMessage) < 5:
             return ""
         self.lastMessage = time.time()
+        logging.error("Loader: %s " % message)
         return render_to_string(self.messageTemplate, { 'message' : message })
 
     def __iter__(self):
         return self
 
     def next(self):
+        '''
+        This is a iterator that emits messages as each operation is completed. 
+        It perform loading, building relationships and building ordered chains
+        The details of each operation for each model type is in the Model class itself
+        '''
         if self.messages is None:
             self.filesToLoad = []
             self.messages = [self._log("Performing Load in %s " % (self.startPath))]
@@ -106,13 +121,15 @@ class DBLoader(object):
                 if object not in objectMap:
                     objectMap[object] = object
             self.objectsToRelate = objectMap.values()
+            self.objectsToChain = objectMap.values()
             self.messages.append(self._log("Will rebuild relationships... "))
             for o in self.objectsToRelate:
                 self.messages.append(self._log(".... for %s " % o))
             self.messages.append(self._log("Will load %s files and rebuild for %s relationships " % (len(self.filesToLoad), len(self.objectsToRelate))))
             self.messageIndex = 0
             self.fileIndex = 0
-            self.objectIndex = 0
+            self.objectIndex = self.objectsToRelate
+            self.chainIndex = 0
         if self.messageIndex < len(self.messages):
             self.messageIndex = self.messageIndex+1
             return self.messages[self.messageIndex-1]
@@ -124,10 +141,17 @@ class DBLoader(object):
         if self.objectIndex < len(self.objectsToRelate):
             self.objectIndex = self.objectIndex+1
             if ( self.objectIndex < len(self.objectsToRelate)):
-                    self.messages.append(self._log("Building %s for %s " % (self.objectIndex, self.objectsToRelate[self.objectIndex])))
+                    self.messages.append(self._log("Building Relationship %s for %s " % (self.objectIndex, self.objectsToRelate[self.objectIndex])))
             else:
                 self.messages.append(self._log("Phase 2  complete"))
             return self._buildRelationship(self.objectIndex-1)
+        if self.chainIndex < len(self.objectsToChain):
+            self.chainIndex = self.chainIndex+1
+            if ( self.chainIndex < len(self.objectsToChain)):
+                    self.messages.append(self._log("Ordering %s for %s " % (self.chainIndex, self.objectsToChain[self.chainIndex])))
+            else:
+                self.messages.append(self._log("Phase 3  complete"))
+            return self._buildOrderedChain(self.chainIndex-1)
         raise StopIteration
 
 
@@ -139,7 +163,7 @@ out to the output stream
 def renderDbLoad_generator(context, loadData, dataSource, dataStructure):
     yield render_to_string("loaddb_pre.djt.html", context )
     dbloader = DBLoader("loaddb_message.djt.html", dataSource, dataStructure, loadData)
-    print "loading from DB"
+    logging.error("loading from DB")
     for message in dbloader:
         yield message
     yield render_to_string("loaddb_post.djt.html", { 'SOURCE_DATA' : settings.SOURCE_DATA})
@@ -155,7 +179,7 @@ def loadDb(request, dataSource, dataStructure):
     if request.method == "POST":
         c = {}
         c.update(csrf(request))
-        print "performing load"
+        logging.error("performing load")
         loadData = ('loadData' in request.POST and "Y" == request.POST['loadData'])
         return  HttpResponse(renderDbLoad_generator(c, loadData, dataSource, dataStructure), content_type="text/html")
     else:

@@ -11,7 +11,7 @@
 				<value key="Script"/>
 			</if>
 			<if key="TitleSerial">			
-				text of <value key="TitleSerial" type="ms-title"/>
+				text of <value key="TitleSerial" authority="ms-title"/>
 			</if>
 			<if key="Calligrapher">
 				<em>calligrapher</em> <value key="Calligrapher"/>

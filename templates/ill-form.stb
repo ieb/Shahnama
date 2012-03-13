@@ -1,7 +1,7 @@
 <container>
 	<text left="ucfirst" right="punc">
 		<join separator=", ">
-			<value key="FormatSerial" type="ill-format" note="type was authority previously"/>
+			<value key="FormatSerial" authority="ill-format" />
 			<text tail="mm (h x w)">
 				<em>page size</em>
 				<join separator=" x " >
