@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib import admin
+
 import json
 # Create your models here.
 '''
@@ -542,7 +544,7 @@ class Illustration(JsonModel):
     folioSort = models.IntegerField(null=True)
     manuscriptid = models.IntegerField(null=True)
 
-    foliosRE = re.compile(r"^([0-9]+)([vr]?)$")
+    foliosRE = re.compile(r"^([0-9]+)([vr]?)")
     
 
     @staticmethod
@@ -604,7 +606,7 @@ class Illustration(JsonModel):
         return val
 
     class Meta:
-        ordering = ['name']
+        ordering = ['folioSort','name']
 
 class Authority(models.Model):
     '''
@@ -676,6 +678,10 @@ class AuthorityAdmin(admin.ModelAdmin):
     list_display = ('id', 'key', 'name')
     list_filter = (['name'])
 
+class IllustrationAdmin(admin.ModelAdmin):
+    search_fields = ('data','name')
+    list_display = ('id', 'key', 'name', 'folioSort', 'scene')
+
 
 
 admin.site.register(Chapter, JsonModelAdmin)
@@ -684,7 +690,7 @@ admin.site.register(Country, JsonModelAdmin)
 admin.site.register(Location, JsonModelAdmin)
 admin.site.register(Manuscript, JsonModelAdmin)
 admin.site.register(Scene, JsonModelAdmin)
-admin.site.register(Illustration, JsonModelAdmin)
+admin.site.register(Illustration, IllustrationAdmin)
 admin.site.register(Authority, AuthorityAdmin)
 
 
