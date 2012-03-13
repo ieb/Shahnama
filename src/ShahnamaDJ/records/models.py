@@ -667,3 +667,24 @@ class Authority(models.Model):
 
 
 
+class JsonModelAdmin(admin.ModelAdmin):
+    search_fields = ('data','name')
+    list_display = ('id', 'key', 'name')
+
+class AuthorityAdmin(admin.ModelAdmin):
+    search_fields = ('data','name')
+    list_display = ('id', 'key', 'name')
+    list_filter = (['name'])
+
+
+
+admin.site.register(Chapter, JsonModelAdmin)
+admin.site.register(Reference, JsonModelAdmin)
+admin.site.register(Country, JsonModelAdmin)
+admin.site.register(Location, JsonModelAdmin)
+admin.site.register(Manuscript, JsonModelAdmin)
+admin.site.register(Scene, JsonModelAdmin)
+admin.site.register(Illustration, JsonModelAdmin)
+admin.site.register(Authority, AuthorityAdmin)
+
+
