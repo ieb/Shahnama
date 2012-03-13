@@ -294,7 +294,6 @@ class IllustrationView(AbstractView):
                         manuscript = ManuscriptView(self.request, model=self.model.manuscript)
                         location = LocationView(self.request, model=self.model.manuscript.location)
                         ls = location.summary()
-                        logging.error("Location %s " % ls)
                         extra['ms_name'] = manuscript.getSafeProperty('AccessionNumber')
                         extra['ms_url'] = "%s/manuscript/%s" % (SERVER_ROOT_URL,manuscript.getSafeProperty('ManuscriptSerial'))
                         extra['loc_name'] = location.getSafeProperty('FullLocationName')
@@ -310,7 +309,6 @@ class IllustrationView(AbstractView):
                         extra['ch_name'] = self.getSafeProperty('chapter_name', map = ss)
                         extra['ch_url'] = self.getSafeProperty('chapter_url', map = ss)
                 self.summaryMap = dict(self.json.items() + extra.items())
-                logging.error("Rendering form with %s " % json.dumps(self.summaryMap, indent=4))
             else:
                 self.summaryMap = {}
         return self.summaryMap
@@ -414,6 +412,7 @@ class LocationView(AbstractView):
                         self.cannon_image = ms['image']
                         return self.cannon_image
             except:
+                logging.error("No image with location id %s " % self.id)
                 return None
         return self.cannon_image
 
@@ -437,6 +436,7 @@ class ManuscriptView(AbstractView):
             self.loadJson()
             return "%s/%s/%s.jpg" % (MANUSCRIPT_URL, type, self.getSafeProperty(type))
         except:
+            logging.error("No imageurl for id %s " % self.id)
             return None
     
     def _size_expr(self, pw, ph, tw, th):
@@ -467,6 +467,7 @@ class ManuscriptView(AbstractView):
                         self.canon_image = p
                         break
             except:
+                logging.error("No canon image for manuscript with id %s " % self.id)
                 return None
         return self.canon_image
     
@@ -632,7 +633,6 @@ class ReferenceView(AbstractView):
             return citation_tmpl.apply(self.request,self.json)
         except:
             logging.error(traceback.format_exc())
-            logging.error("FAILED")
             return citation_tmpl.apply(self.request,{})
 
     @staticmethod
