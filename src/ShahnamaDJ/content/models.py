@@ -5,6 +5,7 @@ Created on Jan 10, 2012
 '''
 from django.db import models
 import json
+from django.contrib import admin
 
 class ContentModel(models.Model):
     id = models.CharField(max_length=32,primary_key=True)
@@ -99,3 +100,20 @@ class Content(ContentMeta):
     
     class Meta:
         ordering = ["published"]
+        
+        
+class ContentMetaAdmin(admin.ModelAdmin):
+    search_fields = ('short_title','short_text')
+    list_display = ('id', 'short_title', 'key', 'published', 'status')
+    list_filter = ('published', 'status','priority')
+
+class ContentAdmin(admin.ModelAdmin):
+    search_fields = ('short_title','short_text')
+    list_display = ('id', 'short_title', 'key', 'published', 'status')
+    list_filter = ('published', 'status','priority')
+
+
+
+admin.site.register(Content, ContentAdmin)
+admin.site.register(ContentMeta, ContentMetaAdmin)
+
