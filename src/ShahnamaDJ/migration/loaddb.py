@@ -15,7 +15,6 @@ from django.db.backends.sqlite3.base import IntegrityError
 from django.views.decorators.http import condition
 from django.conf import settings
 import time
-import traceback
 import logging
 
 '''
@@ -128,7 +127,7 @@ class DBLoader(object):
             self.messages.append(self._log("Will load %s files and rebuild for %s relationships " % (len(self.filesToLoad), len(self.objectsToRelate))))
             self.messageIndex = 0
             self.fileIndex = 0
-            self.objectIndex = self.objectsToRelate
+            self.objectIndex = 0
             self.chainIndex = 0
         if self.messageIndex < len(self.messages):
             self.messageIndex = self.messageIndex+1

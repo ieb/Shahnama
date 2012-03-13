@@ -4,7 +4,7 @@ Created on Jan 10, 2012
 @author: ieb
 '''
 from django.test import TestCase
-from ShahnamaDJ.content.models import ContentMeta, Content
+from ShahnamaDJ.content.models import Content
 from django.test.client import Client
 class SimpleTest(TestCase):
     def test_basic_addition(self):

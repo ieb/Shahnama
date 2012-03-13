@@ -6,12 +6,12 @@ Created on Jan 10, 2012
 from ShahnamaDJ.content.models import Content, ContentMeta
 from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponseNotFound, \
-    HttpResponseBadRequest, HttpResponseRedirect, HttpResponse
+    HttpResponseBadRequest, HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.template.context import RequestContext
 from django.conf import settings
 import json
-from django.utils.http import urlquote, urlquote_plus, urlencode
+from django.utils.http import urlquote
 import Image
 import os
 import shutil

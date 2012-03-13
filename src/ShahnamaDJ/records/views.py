@@ -11,7 +11,6 @@ from ShahnamaDJ.datatypes.hijri import Hijri
 from ShahnamaDJ.views import recordutils
 from ShahnamaDJ.views.recordutils import format_date, wash_notes
 from ShahnamaDJ.views.stringbuilder import StringPattern
-from django.template.context import RequestContext
 import json
 from ShahnamaDJ.content.models import ContentMeta
 import logging
