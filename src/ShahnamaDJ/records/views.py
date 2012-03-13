@@ -120,7 +120,8 @@ class ChapterView(AbstractView):
     
     def loadModel(self):
         if self.model is None and self.id is not None and self.id != '':
-            return Chapter.objects.get(id=self.id)
+            self.model = Chapter.objects.get(id=self.id)
+
 
             
     def render(self):
@@ -169,6 +170,13 @@ class CountryView(AbstractView):
     def render(self):
         return render_to_response("country.djt.html", self.buildContext(self.summary()))
     
+    def loadModel(self):
+        if self.model is None and self.id is not None and self.id != '':
+            try:
+                self.model = Country.objects.get(id=self.id)
+            except:
+                logging.error("Failed to load country %s " % self.id)
+  
     def summary(self, quick = False):
         if self.summaryMap is None:
             countries = Country.objects.all()
@@ -196,6 +204,10 @@ class CountryView(AbstractView):
                 self.summaryMap = {}
         return self.summaryMap
     
+    def getValue(self):
+        v = self.getSafeProperty("value")
+        return v
+
     def gallery(self):
         None
 
@@ -282,21 +294,20 @@ class IllustrationView(AbstractView):
                     if self.model.manuscript is not None:
                         manuscript = ManuscriptView(self.request, model=self.model.manuscript)
                         location = LocationView(self.request, model=self.model.manuscript.location)
-                        ms = manuscript.summary()
                         ls = location.summary()
                         logging.error("Location %s " % ls)
-                        extra['ms_name'] = self.getSafeProperty('AccessionNumber', map = ms)
-                        extra['ms_url'] = "%s/manuscript/%s" % (SERVER_ROOT_URL,self.getSafeProperty('ManuscriptSerial', map = ms))
-                        extra['loc_name'] = self.getSafeProperty('FullLocationName', map = ls)
-                        extra['loc_url'] = "%s/location/%s" % (SERVER_ROOT_URL,self.getSafeProperty('LocationSerial', map = ls))
-                        extra['loc_city'] = self.getSafeProperty('City', map = ls)
+                        extra['ms_name'] = manuscript.getSafeProperty('AccessionNumber')
+                        extra['ms_url'] = "%s/manuscript/%s" % (SERVER_ROOT_URL,manuscript.getSafeProperty('ManuscriptSerial'))
+                        extra['loc_name'] = location.getSafeProperty('FullLocationName')
+                        extra['loc_url'] = "%s/location/%s" % (SERVER_ROOT_URL,location.getSafeProperty('LocationSerial'))
+                        extra['loc_city'] = location.getSafeProperty('City')
                         extra['cou_name'] = self.getSafeProperty('country', map = ls)
-                        extra['cou_url'] = "%s/country/%s" % (SERVER_ROOT_URL,self.getSafeProperty('Country', map = ls))
+                        extra['cou_url'] = "%s/country/%s" % (SERVER_ROOT_URL,location.getSafeProperty('Country'))
                     if self.model.scene is not None:
                         scene = SceneView(self.request, model=self.model.scene)
                         ss = scene.summary()
-                        extra['sc_name'] = self.getSafeProperty('EnglishTitle', map = ss)
-                        extra['sc_url'] = "%s/scene/%s" % (SERVER_ROOT_URL,self.getSafeProperty('SceneSerial', map = ss))
+                        extra['sc_name'] = scene.getSafeProperty('EnglishTitle')
+                        extra['sc_url'] = "%s/scene/%s" % (SERVER_ROOT_URL,scene.getSafeProperty('SceneSerial'))
                         extra['ch_name'] = self.getSafeProperty('chapter_name', map = ss)
                         extra['ch_url'] = self.getSafeProperty('chapter_url', map = ss)
                 self.summaryMap = dict(self.json.items() + extra.items())
@@ -353,7 +364,7 @@ class LocationView(AbstractView):
                     gallery.galleryData = [GalleryView.entry(photo,'#',self.getSafeProperty('FullLocationName'),'View of location, go forward for manuscripts','','',True)]
                     gallery.galleryData.extend([ ManuscriptView(self.request, x).gallery() for x in self.model.manuscript_set.all()])
                 extra = {
-                     'country': AuthorityView(self.request, 'country', self.getSafeProperty('Country')).getValue(),
+                     'country': CountryView(self.request, id=self.getSafeProperty('Country')).getValue(),
                      'gallery': gallery.emit(),
                      'up_date': format_date(self.getSafeProperty('DateUpdated')),
                      'contact': contact_tmpl.apply(self.request,self.json),

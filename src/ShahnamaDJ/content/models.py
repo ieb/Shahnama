@@ -73,6 +73,13 @@ class Content(ContentMeta):
         if 'id' in dictModel:
             return dictModel['id']
         return None
+    
+    @staticmethod
+    def createFromJson(data, key):
+        dataKey = Content.getKeyFromJson(data)
+        if dataKey is None:
+            dataKey = key
+        return Content.objects.create(id=dataKey, key=dataKey, data = json.dumps(data))
 
     @staticmethod
     def safe_to_json(obj):
