@@ -66,7 +66,7 @@ You should consult the Django documentation for information on deployment and co
 
 # Testing
 
-The code base uses DJango unit tests. Some of the test use fixtures. The following fixtures are used during testing. `src/ShahnamaDJ/contenttest.json` and `src/ShahnamaDJ/recordstest.json`. Thes can be created by dumping your working DJango database `python manage.py dumpdata`. If you choose to run Django unit tests ie `python manage.py test` with a complete database in recordstest.json (ie abotu 44MB of json) the test suite will load and validate all 30K+ pages which will take about 1H. (Unit tests are single threadded)
+The code base uses DJango unit tests. Some of the test use fixtures. The following fixtures are used during testing. `src/ShahnamaDJ/contenttest.json` and `src/ShahnamaDJ/recordstest.json`. Thes can be created by dumping your working DJango database `python manage.py dumpdata`. If you choose to run Django unit tests ie `python manage.py test` with a complete database in recordstest.json (ie about 44MB of json) the test suite will load and validate all 30K+ pages which will take about 1H. (Unit tests are single threadded)
 
 
 # Credits
